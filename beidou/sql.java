@@ -1,4 +1,14 @@
-package beidou;
-
-public class sql {
-}
+SELECT
+SUM( CASE WHEN "GROUP"  = '红岩' THEN  NUMBER ELSE 0 END ) as count
+,SUM("NUMBER") AS count2
+,TRUNC(SUM( CASE WHEN "GROUP"  = '红岩' THEN  "NUMBER" ELSE 0 END )*1000/SUM("NUMBER"),1)/10 AS lv
+FROM  UPLOAD.ods_beid_mainOrder_dq
+WHERE  year = '2022'
+AND  STRAIN  in (:option_car )
+AND EMISSIONSTANDARD in (:option_pf )
+AND   DRIVINGFORM  IN (:option_qd)
+AND FUELTYPE in (:option_rl )
+and (1 = (case when :date = '周'then 0 else 1 end ) or WEEK > WEEK(CURRENT TIMESTAMP) -9 )
+and (1 = (case when :date = '月'then 0 else 1 end ) or  MONTH > MONTH(CURRENT TIMESTAMP) -7)
+AND (1 = (case when :adcode = '中国' then 1 else 0 end ) or  WARZONE =  :adcode )
+GROUP BY ''
