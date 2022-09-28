@@ -1,0 +1,14 @@
+SELECT
+group
+, SUM(NUMBER) as count
+FROM  UPLOAD.ods_beid_mainOrder_dq
+WHERE  year = '2022'
+and group = '红岩'
+AND  STRAIN  in (:option_car2 )
+AND EMISSIONSTANDARD in (:option_pf2 )
+AND   DRIVINGFORM  IN (:option_qd2)
+AND FUELTYPE in (:option_rl2 )
+and (1 = (case when :date = '周'then 0 else 1 end ) or WEEK > WEEK(CURRENT TIMESTAMP) -9 )
+and (1 = (case when :date = '月'then 0 else 1 end ) or  MONTH > MONTH(CURRENT TIMESTAMP) -7)
+AND (1 = (case when :adcode = '中国' then 1 else 0 end ) or  WARZONE =  :adcode )
+GROUP BY group

@@ -1,0 +1,63 @@
+-- 需求描述：硬件超期 用户提交的硬件需求全流程中 从信息部审核到设备发放通知两个流程节点的时间 若大于15天 定义为超期
+--数据源  WORKFLOW_NODEBASE 可以用于查询nodeNAME 
+-- ON WORKFLOW_REQUESTLOG.NODEID = WORKFLOW_NODEBASE.ID 
+
+/*
+ * 版本控制:
+ * v1.0 冯国茂   初创 2022/04/20
+ * v1.2 冯国茂   修改取50天内数据 超过的数据默认舍弃  2022/06/17
+ * 待完善事宜
+-- 1.存在众多不含4129节点的订单影响截至当前时间还未进行设备发放订单是否超期的判断。故舍去了该判断 目前的数量缺少截至当前时间还未完成设备发放的.
+ */
+
+SELECT 
+--COUNT(REQUESTID)  AS value
+a.REQUESTID
+,a.WORKFLOWID 
+,a.NODEID
+,a.OPERATEDATE -- 取最大值
+,a.OPERATEDATE2 -- 可能存在同一个节点多个操作时间 取最大值
+,c.csr_bianhao 
+,c.CSR_TITLE
+,c.CSR_ITADVISOR 
+FROM 
+(
+SELECT 
+a.REQUESTID
+,a.WORKFLOWID 
+,a.NODEID
+,a.OPERATEDATE -- 取最大值
+,b.OPERATEDATE2 -- 可能存在同一个节点多个操作时间 取最大值
+FROM 
+(
+SELECT 
+REQUESTID
+,WORKFLOWID 
+,NODEID
+,MAX(OPERATEDATE)  AS OPERATEDATE
+FROM  WF.WORKFLOW_REQUESTLOG wr  
+	where  WORKFLOWID ='481' 
+	AND NODEID  = '4129' -- NODEID 4129设备发放节点时间 取节点最大时间 备注 很多流程中没有这个节点
+	AND  OPERATEDATE > '2022-01-01'
+	AND REQUESTID NOT IN ( SELECT REQUESTID FROM WF.WORKFLOW_REQUESTLOG  
+	where  WORKFLOWID ='481' AND NODEID = '4131'
+	AND  OPERATEDATE > '2022-01-01')
+	GROUP BY NODEID,WORKFLOWID,REQUESTID
+) a 
+LEFT JOIN  
+	(
+	select 
+REQUESTID
+,NODEID
+,max(OPERATEDATE) AS OPERATEDATE2 
+from  WF.WORKFLOW_REQUESTLOG wr 
+WHERE  NODEID  = '4128' -- 4128 信息部审核 可以参考使用LOGTYPE判断审核结果
+AND WORKFLOWID ='481'
+group by REQUESTID,NODEID) AS  b 
+	ON a.REQUESTID = b.REQUESTID
+	) AS A  
+LEFT JOIN wf.formtable_main_37 AS c 
+ON a.REQUESTID = c.REQUESTID 
+WHERE   DAYS(OPERATEDATE) - DAYS (OPERATEDATE2) >15 -- 审核通过实践与设备发放和时间超过15天的是为超期
+--AND OPERATEDATE2 >'2022-01-12'
+AND DAYS(current date) - DAYS(OPERATEDATE) <=50 -- 取50天前的数据 超过50天依旧未处理的 视为异常数据默认舍弃

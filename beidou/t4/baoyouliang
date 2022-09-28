@@ -1,0 +1,48 @@
+-- 版本1
+SELECT
+DISTINCT  CARTYPE
+,sum("NUMBER") over (PARTITION BY CARTYPE)  AS value
+,'保有量'  AS s
+FROM  UPLOAD.ODS_BEID_BAOYOUL_DQ
+WHERE   CARTYPE  in (:option_car4 )
+AND EMISSIONSTANDARD in (:option_pf4 )
+AND   DRIVINGFORM  IN (:option_qd4)
+AND FUELTYPE in (:option_rl4 )
+-- AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  PROVINCE =:adcode )
+UNION ALL
+SELECT
+DISTINCT  CARTYPE
+,sum("NUMBER") over (PARTITION BY CARTYPE)  AS value
+,'运营数' AS s
+FROM UPLOAD.ODS_BEID_MONTHKM_DZ obmd
+WHERE    CARTYPE  in (:option_car4 )
+AND EMISSIONSTANDARD in (:option_pf4 )
+AND   DRIVINGFORM  IN (:option_qd4)
+AND FUELTYPE in (:option_rl4 );
+-- 版本 2
+
+SELECT
+DISTINCT  CARTYPE
+,sum("NUMBER") over (PARTITION BY CARTYPE)  AS value
+,'保有量'  AS s
+FROM  UPLOAD.ODS_BEID_BAOYOUL_DQ  AS a
+LEFT JOIN UPLOAD.ods_beid_area_d AS  b
+ON a.PROVINCE  = b.PROVINCE
+WHERE   CARTYPE  in (:option_car4 )
+AND EMISSIONSTANDARD in (:option_pf4 )
+AND   DRIVINGFORM  IN (:option_qd4)
+AND FUELTYPE in (:option_rl4 )
+AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  b.REGIONALAREA =:adcode )
+UNION  ALL
+SELECT
+DISTINCT  CARTYPE
+,sum("NUMBER") over (PARTITION BY CARTYPE)  AS value
+,'运营数' AS s
+FROM UPLOAD.ODS_BEID_MONTHKM_DZ AS  a
+LEFT JOIN UPLOAD.ods_beid_area_d AS  b
+ON a.PROVINCE  = b.PROVINCE
+WHERE    CARTYPE  in (:option_car4 )
+AND EMISSIONSTANDARD in (:option_pf4 )
+AND   DRIVINGFORM  IN (:option_qd4)
+AND FUELTYPE in (:option_rl4 )
+AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  b.REGIONALAREA =:adcode )

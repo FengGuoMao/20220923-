@@ -1,0 +1,33 @@
+UPDATE   UPLOAD.ODS_BEID_BAOYOUL_DQ
+	SET cartype  =  replace(cartype,'搅拌','牵引' )
+;
+UPDATE   UPLOAD.ODS_BEID_BAOYOUL_DQ
+	SET cartype  =  replace(cartype,'越野','载货' )
+	;
+UPDATE   UPLOAD.ODS_BEID_BAOYOUL_DQ
+	SET "GROUP" = CASE "GROUP"
+					WHEN   '安徽华菱' THEN '华菱'
+					WHEN  '安徽江淮'  THEN '江淮'
+					WHEN  '北奔集团'  THEN '北奔'
+					WHEN  '北汽集团'  THEN '北汽'
+					WHEN  '比亚迪'  THEN '比亚迪'
+					WHEN  '大运集团'  THEN '大运'
+					WHEN  '东风集团'  THEN '东风'
+					WHEN  '广汽集团'  THEN '广汽'
+					WHEN  '江铃集团'  THEN '江铃'
+					WHEN  '进口'  THEN '进口'
+					WHEN  '其他'  THEN '其他'
+					WHEN  '庆铃集团'  THEN '庆铃'
+					WHEN  '三一集团'  THEN '三一'
+					WHEN  '陕汽集团'  THEN '陕汽'
+					WHEN  '上汽红岩'  THEN '红岩'
+					WHEN  '四川南骏'  THEN '南骏'
+					WHEN  '四川现代'  THEN '现代'
+					WHEN  '徐工集团'  THEN '徐工'
+					WHEN  '一汽解放'  THEN '解放'
+					WHEN  '宇通重工'  THEN '宇通'
+					WHEN  '重汽集团'  THEN '重汽'
+					ELSE '其它'
+					END
+					WHERE GROUP NOT IN ('备用')
+
