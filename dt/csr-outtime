@@ -1,0 +1,28 @@
+SELECT
+DAYS (current date) - DAYS (OPERATEDATE) AS date
+,a.REQUESTID
+,b.CSR_BIANHAO
+,b.CSR_TITLE
+,HRMRESOURCE.LASTNAME
+FROM WF.WORKFLOW_REQUESTLOG  AS a
+LEFT JOIN WF.FORMTABLE_MAIN_37 AS b
+ON a.REQUESTID  = b.REQUESTID
+LEFT JOIN WF.HRMRESOURCE AS HRMRESOURCE
+ON b.CSR_ITADVISOR = CHAR(HRMRESOURCE.id)
+WHERE a.REQUESTID IN (
+select
+b.REQUESTID
+from WF.FORMTABLE_MAIN_37 b
+inner join (select * from WF.workflow_requestbase where WORKFLOWID =573) e
+on b.REQUESTID = e.REQUESTID
+where SQLX <2
+and  length(replace(CSR_CeshiWCRQ,' ',''))=0
+and length(replace(CSR_CHENGNUOWCTIME,' ',''))>0
+and e.currentnodetype<>3
+)
+AND a.NODEID  = '5050'
+AND a.LOGTYPE  = '2'
+AND a.OPERATEDATE >'2022-01-01'
+
+
+--and  date(CSR_CHENGNUOWCTIME)<current date

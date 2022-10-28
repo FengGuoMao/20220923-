@@ -137,4 +137,4 @@ and e.currentnodetype<>3
 and  date(CSR_CHENGNUOWCTIME)<current date
 ) AS demo
 LEFT JOIN WF.HRMRESOURCE AS HRMRESOURCE
-ON substr(demo.CSR_ITADVISOR, 1, 4)   LIKE  HRMRESOURCE.id
+ON demo.CSR_ITADVISOR = CHAR(HRMRESOURCE.id)

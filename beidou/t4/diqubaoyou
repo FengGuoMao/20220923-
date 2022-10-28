@@ -1,0 +1,68 @@
+-- 版本1
+SELECT
+a.*
+,b.value AS value2
+FROM (
+SELECT
+ b.REGIONALAREA
+,sum("NUMBER") AS value
+,'运营数' AS s
+FROM UPLOAD.ODS_BEID_MONTHKM_DZ AS  a
+LEFT JOIN UPLOAD.ods_beid_area_d AS  b
+ON a.PROVINCE  = b.PROVINCE
+WHERE    CARTYPE  in (:option_car4 )
+AND EMISSIONSTANDARD in (:option_pf4 )
+AND   DRIVINGFORM  IN (:option_qd4)
+AND FUELTYPE in (:option_rl4 )
+AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  b.REGIONALAREA =:adcode )
+GROUP  BY   b.REGIONALAREA
+) AS a
+LEFT JOIN (SELECT
+sum(a.NUMBER) AS value
+,b.REGIONALAREA
+FROM UPLOAD.ODS_BEID_BAOYOUL_DQ  AS a
+LEFT JOIN UPLOAD.ods_beid_area_d AS  b
+ON a.PROVINCE  = b.PROVINCE
+WHERE    CARTYPE  in (:option_car4 )
+AND EMISSIONSTANDARD in (:option_pf4 )
+AND   DRIVINGFORM  IN (:option_qd4)
+AND FUELTYPE in (:option_rl4 )
+AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  b.REGIONALAREA =:adcode )
+GROUP  BY   b.REGIONALAREA ) AS  b
+ON a.REGIONALAREA = b.REGIONALAREA
+ORDER  BY a.VALUE DESC
+
+-- 版本2
+SELECT
+a.*
+,b.value AS value2
+FROM (
+SELECT
+(CASE WHEN  :adcode  = '中国' THEN b.REGIONALAREA  ELSE b.BRANCHOFFICE END) AS  warZone
+,sum("NUMBER") AS value
+,'运营数' AS s
+FROM UPLOAD.ODS_BEID_MONTHKM_DZ AS  a
+LEFT JOIN UPLOAD.ods_beid_area_d AS  b
+ON a.PROVINCE  = b.PROVINCE
+WHERE    CARTYPE  in (:option_car4 )
+AND EMISSIONSTANDARD in (:option_pf4 )
+AND   DRIVINGFORM  IN (:option_qd4)
+AND FUELTYPE in (:option_rl4 )
+AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  b.REGIONALAREA =:adcode )
+GROUP  BY   (CASE WHEN  :adcode  = '中国' THEN b.REGIONALAREA  ELSE b.BRANCHOFFICE END)
+) AS a
+LEFT JOIN (SELECT
+sum(a.NUMBER) AS value
+,(CASE WHEN  :adcode  = '中国' THEN b.REGIONALAREA  ELSE b.BRANCHOFFICE END) AS  warZone
+FROM UPLOAD.ODS_BEID_BAOYOUL_DQ  AS a
+LEFT JOIN UPLOAD.ods_beid_area_d AS  b
+ON a.PROVINCE  = b.PROVINCE
+WHERE    CARTYPE  in (:option_car4 )
+AND EMISSIONSTANDARD in (:option_pf4 )
+AND   DRIVINGFORM  IN (:option_qd4)
+AND FUELTYPE in (:option_rl4 )
+AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  b.REGIONALAREA =:adcode )
+GROUP  BY (CASE WHEN  :adcode  = '中国' THEN b.REGIONALAREA  ELSE b.BRANCHOFFICE END)
+) AS  b
+ON a.warZone = b.warZone
+ORDER  BY a.VALUE DESC

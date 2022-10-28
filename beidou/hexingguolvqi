@@ -30,4 +30,3 @@ UPDATE   UPLOAD.ODS_BEID_BAOYOUL_DQ
 					ELSE '其它'
 					END
 					WHERE GROUP NOT IN ('备用')
-
