@@ -1,0 +1,28 @@
+SELECT
+cast(SUM(NUMBER2)AS int ) AS  NUMBER
+,DRIVINGFORM
+,HORSEPOWERSECTION
+,type
+FROM
+(SELECT
+cast(SUM(NUMBER)AS int ) AS  NUMBER2
+,CASE "GROUP"  WHEN '红岩'  THEN '红岩' ELSE '行业' END AS type
+,DRIVINGFORM
+,CASE HORSEPOWERSECTION WHEN  '其它' THEN 0
+ELSE
+substr(HORSEPOWERSECTION,2,3 ) END   AS HORSEPOWERSECTION
+FROM UPLOAD.ODS_BEID_MAINORDER_DQ
+WHERE
+ (1 = (case when :date = '年'then 0 else 1 end ) or "YEAR" >= YEAR(CURRENT TIMESTAMP) -1)
+AND EMISSIONSTANDARD IN (:option_pf3 )
+--AND DRIVINGFORM  IN(:option_qd3)
+AND FUELTYPE IN(:option_rl3 )
+and (1 = (case when :date = '周'then 0 else 1 end ) or WEEK >= WEEK(CURRENT TIMESTAMP) -9 )
+and (1 = (case when :date = '月'then 0 else 1 end ) or  MONTH >= MONTH(CURRENT TIMESTAMP) -6)
+and (1 = (case when :date <> '年'then 0 else 1 end ) or  "YEAR" = YEAR(CURRENT TIMESTAMP))
+AND (1 = (case when :adcode = '中国' then 1 else 0 end ) or  WARZONE =  :adcode )
+GROUP BY DRIVINGFORM,YEAR,HORSEPOWERSECTION,GROUP
+)
+GROUP  BY TYPE,DRIVINGFORM,HORSEPOWERSECTION,type
+ORDER BY DRIVINGFORM
+

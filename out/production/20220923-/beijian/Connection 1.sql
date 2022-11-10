@@ -1,0 +1,42 @@
+SELECT warehousename FROM
+(select warehousename--仓库名称
+,SUM(inboundtaskitem) as dinboundtaskitem--求和每日入库应完成条目
+,SUM(inboundfinishitem) as dinboundfinishitem--求和每日入库完成条目
+,SUM(packtaskitem) as dpacktaskitem--求和每日包装应完成条目
+,SUM(packfinishitem) as dpackfinishitem--求和每日包装完成条目
+,SUM(shelvestaskitem) as dshelvestaskitem--求和每日上架应完成条目
+,SUM(shelvesfinishitem) as dshelvesfinishitem--求和每日上架完成条目
+,SUM(picktaskitem) as dpicktaskitem--求和每日拣货应完成条目
+,SUM(pickfinishitem) as dpickfinishitem--求和每日拣货完成条目
+,sum(boxtaskitem) as dboxtaskitem --求和每日装箱应完成条目数
+,sum(boxfinishitem) as dboxfinishitem --求和每日装箱完成条目
+,SUM(inboundtaskfee) as dinboundtaskfee--求和每日入库应完成金额
+,SUM(inboundfinishfee) as dinboundfinishfee--求和每日入库完成金额
+,SUM(packtaskfee) as dpacktaskfee--求和每日包装应完成金额
+,SUM(packfinishfee) as dpackfinishfee--求和每日包装完成金额
+,SUM(shelvestaskfee) as dshelvestaskfee--求和每日上架应完成金额
+,SUM(shelvesfinishfee) as dshelvesfinishfee--求和每日上架完成金额
+,SUM(picktaskfee) as dpicktaskfee--求和每日拣货应完成金额
+,SUM(pickfinishfee) as dpickfinishfee--求和每日拣货完成金额
+,sum(boxtaskfee) as dboxtaskfee --求和每日装箱应完成金额数
+,sum(boxfinishfee) as dboxfinishfee --求和每日装箱完成金额
+from --将数据空值设置为0
+(select warehousename
+,nvl(inboundtakitem,0) as inboundtaskitem ,nvl(inboundfinishitem,0) as inboundfinishitem
+,nvl(packtaskitem,0) as packtaskitem ,nvl(packfinishitem,0) as packfinishitem
+,nvl(shelvestaskitem,0) as shelvestaskitem ,nvl(shelvesfinishitem,0) as shelvesfinishitem
+,nvl(picktaskitem,0) as picktaskitem ,nvl(pickfinishitem,0) as pickfinishitem
+,nvl(boxtaskitem,0) as boxtaskitem ,nvl(boxfinishitem,0) as boxfinishitem
+,nvl(inboundtakfee,0) as inboundtaskfee ,nvl(inboundfinishfee,0) as inboundfinishfee
+,nvl(packtaskfee,0) as packtaskfee ,nvl(packfinishfee,0) as packfinishfee
+,nvl(shelvestaskfee,0) as shelvestaskfee ,nvl(shelvesfinishfee,0) as shelvesfinishfee
+,nvl(picktaskfee,0) as picktaskfee ,nvl(pickfinishfee,0) as pickfinishfee
+,nvl(boxtaskfee,0) as boxtaskfee ,nvl(boxfinishfee,0) as boxfinishfee
+from DCS.HOURLYCOMPLETIONTEAM where TO_CHAR(CREATETIME,'yyyymmdd')=TO_CHAR(SYSDATE,'yyyymmdd')) t
+--去除仓库为空的行
+where warehousename is not NULL--去除仓库为空的行
+group by warehousename) tt
+where dinboundtaskitem+dinboundfinishitem+dpacktaskitem+dpackfinishitem+dshelvestaskitem
++dshelvesfinishitem+dpicktaskitem+dpickfinishitem+dboxtaskitem+dboxfinishitem+dinboundtaskfee
++dinboundfinishfee+dpacktaskfee+dpackfinishfee+dshelvestaskfee+dshelvesfinishfee+dpicktaskfee
++dpickfinishfee+dboxtaskfee+dboxfinishfee>0

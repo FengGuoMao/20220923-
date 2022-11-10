@@ -1,0 +1,61 @@
+{
+  "job": {
+    "content": [
+      {
+        "reader": {
+          "name": "mysqlreader",
+          "parameter": {
+            "connection": [
+              {
+                "table": [
+                  "test_province"
+                ],
+                "jdbcUrl": "jdbc:mysql://10.86.146.115:3306/easyv?useUnicode=true&characterEncoding=utf-8"
+              }
+            ],
+            "username": "root",
+            "password": "123456",
+            "path": "/base_province",
+            "column": [
+              "*"
+            ],
+            "fileType": "text",
+            "compress": "gzip",
+            "encoding": "UTF-8",
+            "nullFormat": "\\N",
+            "fieldDelimiter": "\t"
+          }
+        },
+        "writer": {
+          "name": "mysqlwriter",
+          "parameter": {
+            "username": "root",
+            "password": "123456",
+            "connection": [
+              {
+                "table": [
+                  "test_province"
+                ],
+                "jdbcUrl": "jdbc:mysql://10.:3306/gmall?useUnicode=true&characterEncoding=utf-8"
+              }
+            ],
+            "column": [
+              "id",
+              "name",
+              "region_id",
+              "area_code",
+              "iso_code",
+              "iso_3166_2"
+            ],
+            "writeMode": "replace"
+          }
+        }
+      }
+    ],
+    "setting": {
+      "speed": {
+        "channel": 1
+      }
+    }
+  }
+}

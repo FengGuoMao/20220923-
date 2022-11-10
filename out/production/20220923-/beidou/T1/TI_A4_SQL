@@ -1,0 +1,14 @@
+SELECT (CASE WHEN  :adcode  = '中国' THEN warZone ELSE "BRANCHOFFICE" END) as warZone
+,sum(CASE WHEN  "GROUP" = '红岩' THEN "NUMBER" ELSE 0 END) AS NUMBER1
+,sum("NUMBER") AS NUMBER2
+,trunc(sum(CASE WHEN  "GROUP" = '红岩' THEN "NUMBER" ELSE 0 END)*1000/sum("NUMBER"))/10 AS kt1
+FROM  UPLOAD.ODS_BEID_MAINORDER_DQ
+WHERE  year = '2022'
+AND  STRAIN  in (:option_car )
+AND EMISSIONSTANDARD in (:option_pf )
+AND   DRIVINGFORM  IN (:option_qd)
+AND FUELTYPE in (:option_rl )
+AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  warZone =:adcode )
+and (1 = (case when :date = '周'then 0 else 1 end ) or WEEK > WEEK(CURRENT TIMESTAMP) -9 )
+and (1 = (case when :date = '月'then 0 else 1 end ) or  MONTH > MONTH(CURRENT TIMESTAMP) -7)
+GROUP BY (CASE WHEN  :adcode  = '中国' THEN warZone ELSE "BRANCHOFFICE" END)

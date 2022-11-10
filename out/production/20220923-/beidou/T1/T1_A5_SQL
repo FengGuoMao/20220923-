@@ -1,0 +1,17 @@
+/*
+ * 需求描述：红岩公司汽车行业周度、月度、年度新车区域销量展示，支持地区下钻筛选.
+ *
+版本控制v1.0 时间2022/8/17新增
+ */
+SELECT WARZONE
+,sum(CASE WHEN  "GROUP" = '红岩' THEN "NUMBER" ELSE 0 END) AS y
+,sum(NUMBER) AS NUMBER2
+FROM  UPLOAD.ODS_BEID_MAINORDER_DQ
+WHERE  year = '2022'
+AND  STRAIN  in (:option_car )
+AND EMISSIONSTANDARD in (:option_pf )
+AND   DRIVINGFORM  IN (:option_qd)
+AND FUELTYPE in (:option_rl )
+and (1 = (case when :date = '周'then 0 else 1 end ) or WEEK > WEEK(CURRENT TIMESTAMP) -9 )
+and (1 = (case when :date = '月'then 0 else 1 end ) or  MONTH > MONTH(CURRENT TIMESTAMP) -7)
+GROUP BY WARZONE

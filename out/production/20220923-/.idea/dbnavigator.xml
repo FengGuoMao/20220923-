@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DataExportManager">
@@ -30,6 +30,88 @@
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="fd9d125c-4acc-4c57-8f52-046a82cecd1f">
       <console name="Connection" type="STANDARD" schema="CDCUSR1" session="Main" />
+      <console name="Connection 1" type="STANDARD" schema="CDCUSR1" session="Main"><![CDATA[SELECT warehousename FROM 
+(select warehousename--仓库名称
+,SUM(inboundtaskitem) as dinboundtaskitem--求和每日入库应完成条目
+,SUM(inboundfinishitem) as dinboundfinishitem--求和每日入库完成条目
+,SUM(packtaskitem) as dpacktaskitem--求和每日包装应完成条目
+,SUM(packfinishitem) as dpackfinishitem--求和每日包装完成条目
+,SUM(shelvestaskitem) as dshelvestaskitem--求和每日上架应完成条目
+,SUM(shelvesfinishitem) as dshelvesfinishitem--求和每日上架完成条目
+,SUM(picktaskitem) as dpicktaskitem--求和每日拣货应完成条目
+,SUM(pickfinishitem) as dpickfinishitem--求和每日拣货完成条目
+,sum(boxtaskitem) as dboxtaskitem --求和每日装箱应完成条目数
+,sum(boxfinishitem) as dboxfinishitem --求和每日装箱完成条目
+,SUM(inboundtaskfee) as dinboundtaskfee--求和每日入库应完成金额
+,SUM(inboundfinishfee) as dinboundfinishfee--求和每日入库完成金额
+,SUM(packtaskfee) as dpacktaskfee--求和每日包装应完成金额
+,SUM(packfinishfee) as dpackfinishfee--求和每日包装完成金额
+,SUM(shelvestaskfee) as dshelvestaskfee--求和每日上架应完成金额
+,SUM(shelvesfinishfee) as dshelvesfinishfee--求和每日上架完成金额
+,SUM(picktaskfee) as dpicktaskfee--求和每日拣货应完成金额
+,SUM(pickfinishfee) as dpickfinishfee--求和每日拣货完成金额
+,sum(boxtaskfee) as dboxtaskfee --求和每日装箱应完成金额数
+,sum(boxfinishfee) as dboxfinishfee --求和每日装箱完成金额
+from --将数据空值设置为0
+(select warehousename
+,nvl(inboundtakitem,0) as inboundtaskitem ,nvl(inboundfinishitem,0) as inboundfinishitem 
+,nvl(packtaskitem,0) as packtaskitem ,nvl(packfinishitem,0) as packfinishitem 
+,nvl(shelvestaskitem,0) as shelvestaskitem ,nvl(shelvesfinishitem,0) as shelvesfinishitem 
+,nvl(picktaskitem,0) as picktaskitem ,nvl(pickfinishitem,0) as pickfinishitem 
+,nvl(boxtaskitem,0) as boxtaskitem ,nvl(boxfinishitem,0) as boxfinishitem 
+,nvl(inboundtakfee,0) as inboundtaskfee ,nvl(inboundfinishfee,0) as inboundfinishfee 
+,nvl(packtaskfee,0) as packtaskfee ,nvl(packfinishfee,0) as packfinishfee 
+,nvl(shelvestaskfee,0) as shelvestaskfee ,nvl(shelvesfinishfee,0) as shelvesfinishfee 
+,nvl(picktaskfee,0) as picktaskfee ,nvl(pickfinishfee,0) as pickfinishfee 
+,nvl(boxtaskfee,0) as boxtaskfee ,nvl(boxfinishfee,0) as boxfinishfee 
+from DCS.HOURLYCOMPLETIONTEAM where TO_CHAR(CREATETIME,'yyyymmdd')=TO_CHAR(SYSDATE,'yyyymmdd')) t
+--去除仓库为空的行
+where warehousename is not NULL--去除仓库为空的行
+group by warehousename) tt
+where dinboundtaskitem+dinboundfinishitem+dpacktaskitem+dpackfinishitem+dshelvestaskitem+dshelvesfinishitem+dpicktaskitem+dpickfinishitem+dboxtaskitem+dboxfinishitem+dinboundtaskfee+dinboundfinishfee+dpacktaskfee+dpackfinishfee+dshelvestaskfee+dshelvesfinishfee+dpicktaskfee+dpickfinishfee+dboxtaskfee+dboxfinishfee>0]]></console>
+      <console name="Connection 2" type="STANDARD" schema="CDCUSR1" session="Main"><![CDATA[select warehousename--仓库名称
+,nvl(inboundfinishfee,0) as hboundfinishfee--每小时入库完成金额
+--,nvl(packfinishfee,0) as hpackfinishfee--每小时包装完成金额
+--,nvl(shelvesfinishfee,0) as hshelvesfinishfee--每小时上架完成金额
+--,nvl(pickfinishfee,0) as hpickfinishfee--每小时拣货完成金额
+--,nvl(boxfinishfee,0) as hboxfinishfee--每小时装箱拣货完成金额
+,TO_CHAR(CREATETIME,'hh24:mi') AS CREATETIME --将时间转换为小时
+FROM DCS.HOURLYCOMPLETIONTEAM
+        where TO_CHAR(CREATETIME,'yyyymmdd')=TO_CHAR(SYSDATE,'yyyymmdd')
+        AND warehousename is not NULL 
+        AND TO_CHAR(CREATETIME,'hh24')>=7
+        and warehousename = :ck
+        ORDER by createtime]]></console>
+    </connection>
+    <connection id="fc896289-c2c9-4b01-b363-c41a147091dd">
+      <console name="easyv" type="STANDARD" schema="easyv" session="Main"><![CDATA[CREATE DEFINER=`easyusr`@`%` PROCEDURE `a_stuent1`() -- 定义sql 存储过程 a_student1() 存储过程名称 既函数名
+begin  -- 存储过程开始
+CREATE TABLE Persons  -- 创建一张新表
+(
+Id_P int,
+LastName varchar(255),
+FirstName varchar(255)
+);
+INSERT INTO  Persons(Id_P,lastname,FirstName)  -- 写入数据共有三种写入格式 :
+SELECT 60 ,'语文' ,'HEIHE'  UNION ALL
+ SELECT 70 ,'李四','数学' UNION ALL
+ SELECT 80 ,'王五','英语';
+select * from Persons; -- 执行sql语句也是存储过程的输出
+drop TABLE Persons; -- 删除表
+end -- 存储过程结束]]></console>
+      <console name="Test01" type="STANDARD" schema="easyv" session="Main"><![CDATA[CREATE TABLE Persons 
+(
+Id_P int,
+LastName varchar(255),
+FirstName varchar(255)
+);
+INSERT INTO  Persons(Id_P,lastname,FirstName)  -- 写入数据共有三种写入格式 :
+SELECT 60 ,'语文' ,'HEIHE'  UNION ALL
+ SELECT 70 ,'李四','数学' UNION ALL
+ SELECT 80 ,'王五','英语';
+select * from Persons; -- 执行sql语句也是存储过程的输出
+drop TABLE Persons; -- 删除表
+end -- 存储过程结束]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
@@ -37,6 +119,7 @@
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="fd9d125c-4acc-4c57-8f52-046a82cecd1f" />
+    <connection id="fc896289-c2c9-4b01-b363-c41a147091dd" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="fd9d125c-4acc-4c57-8f52-046a82cecd1f" dataset="APEX_030200.SYS_IOT_OVER_84700" active-filter-id="" />
@@ -48,8 +131,10 @@
     <retain-sticky-names value="false" />
   </component>
   <component name="DBNavigator.Project.FileConnectionMappingManager">
-    <mapping file-url="file://$PROJECT_DIR$/beidou" connection-id="virtual-oracle-connection" session-id="" current-schema="" />
-    <mapping file-url="file://$PROJECT_DIR$/beijian" connection-id="virtual-oracle-connection" session-id="" current-schema="" />
+    <mapping file-url="file://$PROJECT_DIR$/beidou" connection-id="virtual-oracle-connection" session-id="MAIN" current-schema="" />
+    <mapping file-url="file://$PROJECT_DIR$/beijian" connection-id="virtual-oracle-connection" session-id="MAIN" current-schema="" />
+    <mapping file-url="file://$PROJECT_DIR$/beijian/Connection 2.sql" connection-id="fd9d125c-4acc-4c57-8f52-046a82cecd1f" session-id="MAIN" current-schema="CDCUSR1" />
+    <mapping file-url="file://$PROJECT_DIR$/beijian/Connection 1.sql" connection-id="fd9d125c-4acc-4c57-8f52-046a82cecd1f" session-id="MAIN" current-schema="CDCUSR1" />
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />
@@ -70,7 +155,9 @@
     <diagnostics-history />
   </component>
   <component name="DBNavigator.Project.ScriptExecutionManager" clear-outputs="true">
-    <recently-used-interfaces />
+    <recently-used-interfaces>
+      <mapping database-type="MYSQL" interface-id="DEFAULT" />
+    </recently-used-interfaces>
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
@@ -91,6 +178,90 @@
           <type value="USER_PASSWORD" />
           <user value="CDCUSR1" />
           <deprecated-pwd value="a01ua2cxSEJxUmoxcUlINQ==" />
+        </database>
+        <properties>
+          <auto-commit value="false" />
+        </properties>
+        <ssh-settings>
+          <active value="false" />
+          <proxy-host value="" />
+          <proxy-port value="22" />
+          <proxy-user value="" />
+          <deprecated-proxy-pwd value="" />
+          <auth-type value="PASSWORD" />
+          <key-file value="" />
+          <key-passphrase value="" />
+        </ssh-settings>
+        <ssl-settings>
+          <active value="false" />
+          <certificate-authority-file value="" />
+          <client-certificate-file value="" />
+          <client-key-file value="" />
+        </ssl-settings>
+        <details>
+          <charset value="UTF-8" />
+          <session-management value="true" />
+          <ddl-file-binding value="true" />
+          <database-logging value="true" />
+          <connect-automatically value="true" />
+          <restore-workspace value="true" />
+          <restore-workspace-deep value="false" />
+          <environment-type value="default" />
+          <connectivity-timeout value="10" />
+          <idle-time-to-disconnect value="30" />
+          <idle-time-to-disconnect-pool value="5" />
+          <credential-expiry-time value="10" />
+          <max-connection-pool-size value="7" />
+          <alternative-statement-delimiter value="" />
+        </details>
+        <object-filters hide-empty-schemas="false" hide-pseudo-columns="false">
+          <object-type-filter>
+            <object-type name="SCHEMA" enabled="true" />
+            <object-type name="USER" enabled="true" />
+            <object-type name="ROLE" enabled="true" />
+            <object-type name="PRIVILEGE" enabled="true" />
+            <object-type name="CHARSET" enabled="true" />
+            <object-type name="TABLE" enabled="true" />
+            <object-type name="VIEW" enabled="true" />
+            <object-type name="MATERIALIZED_VIEW" enabled="true" />
+            <object-type name="NESTED_TABLE" enabled="true" />
+            <object-type name="COLUMN" enabled="true" />
+            <object-type name="INDEX" enabled="true" />
+            <object-type name="CONSTRAINT" enabled="true" />
+            <object-type name="DATASET_TRIGGER" enabled="true" />
+            <object-type name="DATABASE_TRIGGER" enabled="true" />
+            <object-type name="SYNONYM" enabled="true" />
+            <object-type name="SEQUENCE" enabled="true" />
+            <object-type name="PROCEDURE" enabled="true" />
+            <object-type name="FUNCTION" enabled="true" />
+            <object-type name="PACKAGE" enabled="true" />
+            <object-type name="TYPE" enabled="true" />
+            <object-type name="TYPE_ATTRIBUTE" enabled="true" />
+            <object-type name="ARGUMENT" enabled="true" />
+            <object-type name="DIMENSION" enabled="true" />
+            <object-type name="CLUSTER" enabled="true" />
+            <object-type name="DBLINK" enabled="true" />
+          </object-type-filter>
+          <object-name-filters />
+        </object-filters>
+      </connection>
+      <connection id="fc896289-c2c9-4b01-b363-c41a147091dd" active="true" signed="true">
+        <database>
+          <name value="easyv" />
+          <description value="xxx" />
+          <database-type value="MYSQL" />
+          <config-type value="BASIC" />
+          <database-version value="5.7" />
+          <driver-source value="BUILTIN" />
+          <driver-library value="" />
+          <driver value="" />
+          <url-type value="DATABASE" />
+          <host value="10.86.146.115" />
+          <port value="3306" />
+          <database value="easyv" />
+          <type value="USER_PASSWORD" />
+          <user value="easyusr" />
+          <deprecated-pwd value="c3hWNUBIYTY2Ng==" />
         </database>
         <properties>
           <auto-commit value="false" />
@@ -558,6 +729,13 @@
     </general-settings>
   </component>
   <component name="DBNavigator.Project.StatementExecutionManager">
-    <execution-variables />
+    <execution-variables>
+      <file file-url="file://$PROJECT_DIR$/beijian/Connection 2.sql">
+        <variable name=":ck" dataType="LITERAL" values="双桥总库, " />
+      </file>
+      <file file-url="db://fd9d125c-4acc-4c57-8f52-046a82cecd1f/consoles/Connection 2">
+        <variable name=":ck" dataType="LITERAL" values="南京总库, " />
+      </file>
+    </execution-variables>
   </component>
 </project>

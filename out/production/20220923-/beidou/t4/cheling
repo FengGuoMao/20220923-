@@ -1,0 +1,11 @@
+SELECT  SUM( number) as value
+,COTY
+,CARTYPE
+FROM UPLOAD.ODS_BEID_COTY_DQ  obcd
+where
+-- CARTYPE  in (:option_car4 )
+ EMISSIONSTANDARD in (:option_pf4 )
+AND   DRIVINGFORM  IN (:option_qd4)
+AND FUELTYPE in (:option_rl4 )
+-- AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  PROVINCE =:adcode )
+GROUP BY COTY, CARTYPE

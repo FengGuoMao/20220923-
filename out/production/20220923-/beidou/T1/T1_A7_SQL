@@ -1,0 +1,54 @@
+SELECT  * FROM (
+SELECT
+ (CASE WHEN  :date  = '周' THEN WEEK WHEN :date  = '年' THEN "YEAR" ELSE "MONTH" END) AS xt5
+,sum(CASE WHEN  "GROUP" = '红岩' THEN "NUMBER" ELSE 0 END) AS NUMBER1
+,'红岩' AS type
+FROM UPLOAD.ODS_BEID_MAINORDER_DQ
+WHERE "YEAR"  IN ('2021','2022')
+AND  STRAIN  in (:option_car )
+AND EMISSIONSTANDARD in (:option_pf )
+AND   DRIVINGFORM  IN (:option_qd)
+AND FUELTYPE in (:option_rl )
+and (1 = (case when :date = '周'then 0 else 1 end ) or WEEK >= WEEK(CURRENT TIMESTAMP) -9 )
+and (1 = (case when :date = '月'then 0 else 1 end ) or  MONTH >= MONTH(CURRENT TIMESTAMP) -6)
+AND (1 = (case when :adcode = '中国' then 1 else 0 end ) or  WARZONE =  :adcode )
+and (1 = (case when :date <> '年'then 0 else 1 end ) or  "YEAR" = YEAR(CURRENT TIMESTAMP))
+AND (1 = (case when :date = '年'then 0 else 1 end ) or "YEAR" >= YEAR(CURRENT TIMESTAMP) -1)
+GROUP BY (CASE WHEN  :date  = '周' THEN WEEK WHEN :date  = '年' THEN "YEAR" ELSE "MONTH" END)
+UNION  ALL
+SELECT
+(CASE WHEN  :date  = '周' THEN WEEK WHEN :date  = '年' THEN "YEAR" ELSE "MONTH" END) AS xt5
+,sum("NUMBER") AS NUMBER2
+,'行业' AS type
+FROM UPLOAD.ODS_BEID_MAINORDER_DQ
+WHERE  "YEAR"  IN ('2021','2022')
+AND  STRAIN  in (:option_car )
+AND EMISSIONSTANDARD in (:option_pf )
+AND   DRIVINGFORM  IN (:option_qd)
+AND FUELTYPE in (:option_rl )
+and (1 = (case when :date = '周'then 0 else 1 end ) or WEEK >= WEEK(CURRENT TIMESTAMP) -9 )
+and (1 = (case when :date = '月'then 0 else 1 end ) or  MONTH >= MONTH(CURRENT TIMESTAMP) -6)
+AND (1 = (case when :adcode = '中国' then 1 else 0 end ) or  WARZONE =  :adcode )
+and (1 = (case when :date <> '年'then 0 else 1 end ) or  "YEAR" = YEAR(CURRENT TIMESTAMP))
+AND (1 = (case when :date = '年'then 0 else 1 end ) or "YEAR" >= YEAR(CURRENT TIMESTAMP) -1)
+GROUP BY (CASE WHEN  :date  = '周' THEN WEEK WHEN :date  = '年' THEN "YEAR" ELSE "MONTH" END)
+UNION  ALL
+SELECT
+(CASE WHEN  :date  = '周' THEN WEEK WHEN :date  = '年' THEN "YEAR" ELSE "MONTH" END)  AS xt5
+,trunc(sum(CASE WHEN  "GROUP" = '红岩' THEN "NUMBER" ELSE 0 END)*1000/sum("NUMBER"),1)/10
+AS NUMBER3
+,'占比' AS type
+FROM UPLOAD.ODS_BEID_MAINORDER_DQ
+WHERE "YEAR"  IN ('2021','2022')
+AND  STRAIN  in (:option_car )
+AND EMISSIONSTANDARD in (:option_pf )
+AND   DRIVINGFORM  IN (:option_qd)
+AND FUELTYPE in (:option_rl )
+and (1 = (case when :date = '周'then 0 else 1 end ) or WEEK >= WEEK(CURRENT TIMESTAMP) -9 )
+and (1 = (case when :date = '月'then 0 else 1 end ) or  MONTH >= MONTH(CURRENT TIMESTAMP) -6)
+AND (1 = (case when :adcode = '中国' then 1 else 0 end ) or  WARZONE =  :adcode )
+and (1 = (case when :date <> '年'then 0 else 1 end ) or  "YEAR" = YEAR(CURRENT TIMESTAMP))
+AND (1 = (case when :date = '年'then 0 else 1 end ) or "YEAR" >= YEAR(CURRENT TIMESTAMP) -1)
+GROUP BY (CASE WHEN  :date  = '周' THEN WEEK WHEN :date  = '年' THEN "YEAR" ELSE "MONTH" END)
+)
+ORDER  BY TYPE,xt5

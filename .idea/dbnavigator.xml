@@ -83,12 +83,43 @@ FROM DCS.HOURLYCOMPLETIONTEAM
         and warehousename = :ck
         ORDER by createtime]]></console>
     </connection>
+    <connection id="fc896289-c2c9-4b01-b363-c41a147091dd">
+      <console name="easyv" type="STANDARD" schema="easyv" session="Main"><![CDATA[CREATE DEFINER=`easyusr`@`%` PROCEDURE `a_stuent1`() -- 定义sql 存储过程 a_student1() 存储过程名称 既函数名
+begin  -- 存储过程开始
+CREATE TABLE Persons  -- 创建一张新表
+(
+Id_P int,
+LastName varchar(255),
+FirstName varchar(255)
+);
+INSERT INTO  Persons(Id_P,lastname,FirstName)  -- 写入数据共有三种写入格式 :
+SELECT 60 ,'语文' ,'HEIHE'  UNION ALL
+ SELECT 70 ,'李四','数学' UNION ALL
+ SELECT 80 ,'王五','英语';
+select * from Persons; -- 执行sql语句也是存储过程的输出
+drop TABLE Persons; -- 删除表
+end -- 存储过程结束]]></console>
+      <console name="Test01" type="STANDARD" schema="easyv" session="Main"><![CDATA[CREATE TABLE Persons 
+(
+Id_P int,
+LastName varchar(255),
+FirstName varchar(255)
+);
+INSERT INTO  Persons(Id_P,lastname,FirstName)  -- 写入数据共有三种写入格式 :
+SELECT 60 ,'语文' ,'HEIHE'  UNION ALL
+ SELECT 70 ,'李四','数学' UNION ALL
+ SELECT 80 ,'王五','英语';
+select * from Persons; -- 执行sql语句也是存储过程的输出
+drop TABLE Persons; -- 删除表
+end -- 存储过程结束]]></console>
+    </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="fd9d125c-4acc-4c57-8f52-046a82cecd1f" />
+    <connection id="fc896289-c2c9-4b01-b363-c41a147091dd" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="fd9d125c-4acc-4c57-8f52-046a82cecd1f" dataset="APEX_030200.SYS_IOT_OVER_84700" active-filter-id="" />
@@ -124,7 +155,9 @@ FROM DCS.HOURLYCOMPLETIONTEAM
     <diagnostics-history />
   </component>
   <component name="DBNavigator.Project.ScriptExecutionManager" clear-outputs="true">
-    <recently-used-interfaces />
+    <recently-used-interfaces>
+      <mapping database-type="MYSQL" interface-id="DEFAULT" />
+    </recently-used-interfaces>
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
@@ -145,6 +178,90 @@ FROM DCS.HOURLYCOMPLETIONTEAM
           <type value="USER_PASSWORD" />
           <user value="CDCUSR1" />
           <deprecated-pwd value="a01ua2cxSEJxUmoxcUlINQ==" />
+        </database>
+        <properties>
+          <auto-commit value="false" />
+        </properties>
+        <ssh-settings>
+          <active value="false" />
+          <proxy-host value="" />
+          <proxy-port value="22" />
+          <proxy-user value="" />
+          <deprecated-proxy-pwd value="" />
+          <auth-type value="PASSWORD" />
+          <key-file value="" />
+          <key-passphrase value="" />
+        </ssh-settings>
+        <ssl-settings>
+          <active value="false" />
+          <certificate-authority-file value="" />
+          <client-certificate-file value="" />
+          <client-key-file value="" />
+        </ssl-settings>
+        <details>
+          <charset value="UTF-8" />
+          <session-management value="true" />
+          <ddl-file-binding value="true" />
+          <database-logging value="true" />
+          <connect-automatically value="true" />
+          <restore-workspace value="true" />
+          <restore-workspace-deep value="false" />
+          <environment-type value="default" />
+          <connectivity-timeout value="10" />
+          <idle-time-to-disconnect value="30" />
+          <idle-time-to-disconnect-pool value="5" />
+          <credential-expiry-time value="10" />
+          <max-connection-pool-size value="7" />
+          <alternative-statement-delimiter value="" />
+        </details>
+        <object-filters hide-empty-schemas="false" hide-pseudo-columns="false">
+          <object-type-filter>
+            <object-type name="SCHEMA" enabled="true" />
+            <object-type name="USER" enabled="true" />
+            <object-type name="ROLE" enabled="true" />
+            <object-type name="PRIVILEGE" enabled="true" />
+            <object-type name="CHARSET" enabled="true" />
+            <object-type name="TABLE" enabled="true" />
+            <object-type name="VIEW" enabled="true" />
+            <object-type name="MATERIALIZED_VIEW" enabled="true" />
+            <object-type name="NESTED_TABLE" enabled="true" />
+            <object-type name="COLUMN" enabled="true" />
+            <object-type name="INDEX" enabled="true" />
+            <object-type name="CONSTRAINT" enabled="true" />
+            <object-type name="DATASET_TRIGGER" enabled="true" />
+            <object-type name="DATABASE_TRIGGER" enabled="true" />
+            <object-type name="SYNONYM" enabled="true" />
+            <object-type name="SEQUENCE" enabled="true" />
+            <object-type name="PROCEDURE" enabled="true" />
+            <object-type name="FUNCTION" enabled="true" />
+            <object-type name="PACKAGE" enabled="true" />
+            <object-type name="TYPE" enabled="true" />
+            <object-type name="TYPE_ATTRIBUTE" enabled="true" />
+            <object-type name="ARGUMENT" enabled="true" />
+            <object-type name="DIMENSION" enabled="true" />
+            <object-type name="CLUSTER" enabled="true" />
+            <object-type name="DBLINK" enabled="true" />
+          </object-type-filter>
+          <object-name-filters />
+        </object-filters>
+      </connection>
+      <connection id="fc896289-c2c9-4b01-b363-c41a147091dd" active="true" signed="true">
+        <database>
+          <name value="easyv" />
+          <description value="xxx" />
+          <database-type value="MYSQL" />
+          <config-type value="BASIC" />
+          <database-version value="5.7" />
+          <driver-source value="BUILTIN" />
+          <driver-library value="" />
+          <driver value="" />
+          <url-type value="DATABASE" />
+          <host value="10.86.146.115" />
+          <port value="3306" />
+          <database value="easyv" />
+          <type value="USER_PASSWORD" />
+          <user value="easyusr" />
+          <deprecated-pwd value="c3hWNUBIYTY2Ng==" />
         </database>
         <properties>
           <auto-commit value="false" />
