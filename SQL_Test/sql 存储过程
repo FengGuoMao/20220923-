@@ -1,3 +1,11 @@
+-- 定义 sql存储过程
+-- 存储过程（stored procedure）是一组为了完成特定功能的sql语句集。
+--   经过编译以后存储在数据库中，存储过程可能包含程序流、逻辑流以及对数据库的查询。
+--   他可以接受参数。输出参数，返回单个或者多个结果集以及返回值。
+-- 实例：
+-- 将重复的工作比如查询某人的工资，写成存储过程，并设置参数，就可以调用这个存储过程点少重复开发。
+
+-- 创建一个普通的查询类存储过程
 CREATE DEFINER=`easyusr`@`%` PROCEDURE `a_stuent1`() -- 定义sql 存储过程 a_student1() 存储过程名称 既函数名
 begin  -- 存储过程开始
 CREATE TABLE Persons  -- 创建一张新表
@@ -7,9 +15,10 @@ LastName varchar(255),
 FirstName varchar(255)
 );
 INSERT INTO  Persons(Id_P,lastname,FirstName)  -- 写入数据共有三种写入格式 :
-SELECT 60 ,'语文' ,'HEIHE'  UNION ALL
- SELECT 70 ,'李四','数学' UNION ALL
- SELECT 80 ,'王五','英语';
+SELECT 60 ,'nice' ,'HEIHEi'  UNION ALL
+ SELECT 70 ,'perfect','cream' UNION ALL
+ SELECT 80 ,'host','evangelise';
 select * from Persons; -- 执行sql语句也是存储过程的输出
 drop TABLE Persons; -- 删除表
 end -- 存储过程结束
+

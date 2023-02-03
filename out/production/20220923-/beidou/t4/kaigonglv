@@ -1,0 +1,35 @@
+SELECT
+a."NUMBER"
+,a."DATE"  AS X
+,b.number
+,b.date
+,TRUNC( a."NUMBER" /b.number,4)*100 AS lv
+,'系列一' AS S
+FROM (
+SELECT
+SUM("NUMBER" ) AS "NUMBER"
+,a."DATE"
+FROM UPLOAD.ODS_BEID_DAYKM_DZZ AS  a
+LEFT JOIN UPLOAD.ods_beid_area_d AS  b
+ON a.PROVINCE  = b.PROVINCE
+WHERE DAYS (a.DATE) >= (SELECT MAX(DAYS(DATE)) FROM UPLOAD.ODS_BEID_DAYKM_DZZ)-29
+--AND  CARTYPE  in (:option_car4 )
+--AND EMISSIONSTANDARD IN(:option_pf4 )
+--AND DRIVINGFORM  IN(:option_qd4)
+--AND FUELTYPE IN(:option_rl4 )
+AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  b.REGIONALAREA =:adcode )
+GROUP BY "DATE" ) AS a
+LEFT JOIN  (SELECT  SUM("NUMBER") AS "NUMBER"
+					,"DATE"
+			FROM  UPLOAD.ODS_BEID_BAOYOUL_DQQ AS a
+			LEFT JOIN UPLOAD.ods_beid_area_d AS  b
+			ON a.PROVINCE  = b.PROVINCE
+			WHERE  (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  b.REGIONALAREA =:adcode )
+--			AND  CARTYPE  in (:option_car4 )
+--			AND EMISSIONSTANDARD IN(:option_pf4 )
+--			AND DRIVINGFORM  IN(:option_qd4)
+--			AND FUELTYPE IN(:option_rl4 )
+			GROUP  BY "DATE"
+			) AS b
+ON SUBSTR(b.DATE,5,2) = SUBSTR(a.DATE,6,2)-1
+ORDER BY a."DATE"

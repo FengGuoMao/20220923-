@@ -1,0 +1,5 @@
+hii="dashizi"
+DBNAME="hill"
+echo ${hii}
+echo $DBNAME
+shell

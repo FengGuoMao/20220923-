@@ -1,0 +1,9 @@
+
+myUrl="https://www.google.com"
+readonly myUrl
+#myUrl="https://www.runoob.com"
+echo $myUrl
+
+shell "select""*""from"" ""test1"
+#shell "select * from tset1"
+

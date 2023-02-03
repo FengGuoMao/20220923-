@@ -1,0 +1,68 @@
+-- dwd.dwd_zjxl_hy_local_new_car_t definition
+
+CREATE TABLE `dwd.dwd_zjxl_hy_local_new_car_t`(
+  `stat_date` string,
+  `sale_center` string,
+  `province` string,
+  `city` string,
+  `area` string,
+  `enterprise` string,
+  `vehicle_brand` string,
+  `vehicle_type` string,
+  `discharge_standard` string,
+  `fuel_type` string,
+  `drive_type` string,
+  `horsepower_range` string,
+  `engine_type` string,
+  `veh_num` int)
+ROW FORMAT SERDE
+  'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
+STORED AS INPUTFORMAT
+  'org.apache.hadoop.mapred.TextInputFormat'
+OUTPUTFORMAT
+  'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+LOCATION
+  'hdfs://dpm-cdh/user/hive/warehouse/dwd.db/dwd_zjxl_hy_local_new_car_t'
+TBLPROPERTIES (
+  'transient_lastDdlTime'='1675145636');
+
+  -- ods.ods_zjxl_hy_local_new_car_t definition
+
+  CREATE TABLE `ods.ods_zjxl_hy_local_new_car_t`(
+    `stat_date` string,
+    `sale_center` string,
+    `province` string,
+    `city` string,
+    `area` string,
+    `enterprise` string,
+    `vehicle_brand` string,
+    `vehicle_type` string,
+    `discharge_standard` string,
+    `fuel_type` string,
+    `drive_type` string,
+    `horsepower_range` string,
+    `engine_type` string,
+    `veh_num` int)
+  COMMENT '新车数据统计'
+  PARTITIONED BY (
+    `date_no` string)
+  ROW FORMAT SERDE
+    'org.apache.hadoop.hive.ql.io.orc.OrcSerde'
+  STORED AS INPUTFORMAT
+    'org.apache.hadoop.hive.ql.io.orc.OrcInputFormat'
+  OUTPUTFORMAT
+    'org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat'
+  LOCATION
+    'hdfs://dpm-cdh/user/hive/warehouse/ods.db/ods_zjxl_hy_local_new_car_t'
+  TBLPROPERTIES (
+    'orc.compress'='SNAPPY',
+    'partition.time-extractor.timestamp-pattern'='$date_no 00:00:00',
+    'sink.partition-commit.delay'='1 h',
+    'sink.partition-commit.policy.kind'='metastore,success-file',
+    'sink.partition-commit.trigger'='partition-time',
+    'sink.rolling-policy.check-interval'='1 h',
+    'sink.rolling-policy.file-size'='128MB',
+    'sink.rolling-policy.rollover-interval'='1 h',
+    'sink.semantic'='exactly-once',
+    'table.exec.hive.fallback-mapred-writer'='false',
+    'transient_lastDdlTime'='1673830601');

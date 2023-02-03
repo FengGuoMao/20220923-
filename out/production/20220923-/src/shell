@@ -1,0 +1,19 @@
+HOSTNAME="10.86.146.115"  #数据库信息
+
+PORT="3306"
+
+USERNAME="easyusr"
+
+PASSWORD="sxV5@Ha666"
+
+DBNAME="easyv"  #数据库名称
+
+TABLENAME="test1" #数据库中表的名称
+
+
+
+#创建数据库
+echo "${DBNAME}"
+create_table_sql="UPDATE  test1 SET id_p=15 where id_p=1"
+
+mysql -h${HOSTNAME} -P${PORT} -u${USERNAME} -p${PASSWORD} ${DBNAME} -e"${create_table_sql}"

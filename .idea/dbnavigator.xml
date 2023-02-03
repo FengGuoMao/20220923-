@@ -111,7 +111,18 @@ SELECT 60 ,'语文' ,'HEIHE'  UNION ALL
  SELECT 80 ,'王五','英语';
 select * from Persons; -- 执行sql语句也是存储过程的输出
 drop TABLE Persons; -- 删除表
-end -- 存储过程结束]]></console>
+--end -- 存储过程结束]]></console>
+    </connection>
+    <connection id="04547645-25bf-4563-91e7-d8eba0548e04">
+      <console name="add_columns" type="STANDARD" schema="mysql" session="Main"><![CDATA[create table  if not exists test5(
+  id int(10) unsigned not null auto_increment ,-- 创建自增列 auto_increment
+  name char(20) not null default '',
+  primary key (id) -- 自增配合使用唯一主键 primary key ()
+);
+insert into test5 (name,id) VALUES('',26);
+SELECT * from test5;
+ALTER TABLE test5 ADD COLUMN goods VARCHAR(15) -- 指定列名，字段属性]]></console>
+      <console name="Connection 1" type="STANDARD" schema="mysql" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
@@ -120,8 +131,14 @@ end -- 存储过程结束]]></console>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="fd9d125c-4acc-4c57-8f52-046a82cecd1f" />
     <connection id="fc896289-c2c9-4b01-b363-c41a147091dd" />
+    <connection id="04547645-25bf-4563-91e7-d8eba0548e04" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="04547645-25bf-4563-91e7-d8eba0548e04" dataset="mysql.test5" active-filter-id="91b9cea8-78ec-4753-8574-0ae9767b0e23">
+      <filter id="91b9cea8-78ec-4753-8574-0ae9767b0e23" name="1" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="id" operator="=" value="1" active="true" />
+      </filter>
+    </filter-actions>
     <filter-actions connection-id="fd9d125c-4acc-4c57-8f52-046a82cecd1f" dataset="APEX_030200.SYS_IOT_OVER_84700" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
@@ -135,6 +152,7 @@ end -- 存储过程结束]]></console>
     <mapping file-url="file://$PROJECT_DIR$/beijian" connection-id="virtual-oracle-connection" session-id="MAIN" current-schema="" />
     <mapping file-url="file://$PROJECT_DIR$/beijian/Connection 2.sql" connection-id="fd9d125c-4acc-4c57-8f52-046a82cecd1f" session-id="MAIN" current-schema="CDCUSR1" />
     <mapping file-url="file://$PROJECT_DIR$/beijian/Connection 1.sql" connection-id="fd9d125c-4acc-4c57-8f52-046a82cecd1f" session-id="MAIN" current-schema="CDCUSR1" />
+    <mapping file-url="file://$PROJECT_DIR$/SQL_Test/add_columns.sql" connection-id="04547645-25bf-4563-91e7-d8eba0548e04" session-id="MAIN" current-schema="mysql" />
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />
@@ -262,6 +280,90 @@ end -- 存储过程结束]]></console>
           <type value="USER_PASSWORD" />
           <user value="easyusr" />
           <deprecated-pwd value="c3hWNUBIYTY2Ng==" />
+        </database>
+        <properties>
+          <auto-commit value="false" />
+        </properties>
+        <ssh-settings>
+          <active value="false" />
+          <proxy-host value="" />
+          <proxy-port value="22" />
+          <proxy-user value="" />
+          <deprecated-proxy-pwd value="" />
+          <auth-type value="PASSWORD" />
+          <key-file value="" />
+          <key-passphrase value="" />
+        </ssh-settings>
+        <ssl-settings>
+          <active value="false" />
+          <certificate-authority-file value="" />
+          <client-certificate-file value="" />
+          <client-key-file value="" />
+        </ssl-settings>
+        <details>
+          <charset value="UTF-8" />
+          <session-management value="true" />
+          <ddl-file-binding value="true" />
+          <database-logging value="true" />
+          <connect-automatically value="true" />
+          <restore-workspace value="true" />
+          <restore-workspace-deep value="false" />
+          <environment-type value="default" />
+          <connectivity-timeout value="10" />
+          <idle-time-to-disconnect value="30" />
+          <idle-time-to-disconnect-pool value="5" />
+          <credential-expiry-time value="10" />
+          <max-connection-pool-size value="7" />
+          <alternative-statement-delimiter value="" />
+        </details>
+        <object-filters hide-empty-schemas="false" hide-pseudo-columns="false">
+          <object-type-filter>
+            <object-type name="SCHEMA" enabled="true" />
+            <object-type name="USER" enabled="true" />
+            <object-type name="ROLE" enabled="true" />
+            <object-type name="PRIVILEGE" enabled="true" />
+            <object-type name="CHARSET" enabled="true" />
+            <object-type name="TABLE" enabled="true" />
+            <object-type name="VIEW" enabled="true" />
+            <object-type name="MATERIALIZED_VIEW" enabled="true" />
+            <object-type name="NESTED_TABLE" enabled="true" />
+            <object-type name="COLUMN" enabled="true" />
+            <object-type name="INDEX" enabled="true" />
+            <object-type name="CONSTRAINT" enabled="true" />
+            <object-type name="DATASET_TRIGGER" enabled="true" />
+            <object-type name="DATABASE_TRIGGER" enabled="true" />
+            <object-type name="SYNONYM" enabled="true" />
+            <object-type name="SEQUENCE" enabled="true" />
+            <object-type name="PROCEDURE" enabled="true" />
+            <object-type name="FUNCTION" enabled="true" />
+            <object-type name="PACKAGE" enabled="true" />
+            <object-type name="TYPE" enabled="true" />
+            <object-type name="TYPE_ATTRIBUTE" enabled="true" />
+            <object-type name="ARGUMENT" enabled="true" />
+            <object-type name="DIMENSION" enabled="true" />
+            <object-type name="CLUSTER" enabled="true" />
+            <object-type name="DBLINK" enabled="true" />
+          </object-type-filter>
+          <object-name-filters />
+        </object-filters>
+      </connection>
+      <connection id="04547645-25bf-4563-91e7-d8eba0548e04" active="true" signed="true">
+        <database>
+          <name value="mysqltest" />
+          <description value="mytest" />
+          <database-type value="MYSQL" />
+          <config-type value="BASIC" />
+          <database-version value="8.0" />
+          <driver-source value="BUILTIN" />
+          <driver-library value="" />
+          <driver value="" />
+          <url-type value="DATABASE" />
+          <host value="localhost" />
+          <port value="3306" />
+          <database value="mysql" />
+          <type value="USER_PASSWORD" />
+          <user value="root" />
+          <deprecated-pwd value="U0lIYWJjMTIz" />
         </database>
         <properties>
           <auto-commit value="false" />
