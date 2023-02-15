@@ -1,0 +1,16 @@
+CREATE TABLE if not exists `ads_zjxl_hy_local_new_car_dq` (
+  `date` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `sale_center` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `province` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `city` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `area` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `enterprise` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `vehicle_brand` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `vehicle_type` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `discharge_standard` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `fuel_type` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `drive_type` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `horsepower_range` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `engine_type` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `veh_num` bigint(20) unsigned DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

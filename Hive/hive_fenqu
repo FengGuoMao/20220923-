@@ -1,0 +1,18 @@
+--场景
+--以dt（日期）分区的hive表，获取最新一天的分区数据
+--如果是普通的SQL的话，下面这样写就可以了，但是hive中这种写法会***报错***
+SELECT
+*
+FROM xxx
+WHERE dt=(SELECT max(dt) FROM xxx)
+
+--解决方法
+--在hive里，要用alias才能获取分区中的数据，而且查询条件（WHRER）中还必须带有分区字段（dt），否会报则错
+SELECT
+b.item as `item`
+FROM
+(SELECT MAX(dt) as latest_dt FROM xxxx WHERE dt IS NOT NULL) a
+JOIN
+xxxx b
+ON a.latest_dt=b.dt
+WHERE b.dt IS NOT NULL;

@@ -1,0 +1,18 @@
+-- easyv.ads_zjxl_hy_local_new_car_t definition
+
+CREATE TABLE `ads_zjxl_hy_local_new_car_dq` (
+  `date` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `DistributionCenter` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `province` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `city` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `area` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `group` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `brand` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `STRAIN` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `emissionStandard` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `FuelType` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `DrivingForm` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `HorsepowerSection` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `VN` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `number` bigint(20) unsigned DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

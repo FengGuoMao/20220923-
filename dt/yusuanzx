@@ -1,0 +1,75 @@
+--预算执行情况
+/*取系统中项目组提供项目的收货金额
+ * 取项目提供（李星鑫）项目名称及项目预算为主计算收货金额占比预算的值
+ */
+ /*数据源
+  * wf.ps_md_wbs 预算系统  数据更新方式  cdc拉取 任务名称：贺诗宇负责
+  * wf.ps_md_ps AS c  -- 取项目名称    任务名称：贺诗宇负责
+  * wf.PS_CO_PR  AS b  -- 取项目金额   任务名称：贺诗宇负责
+  * WF.budget_pr_used
+  * WF.formtable_main_18
+  */
+--SELECT name,ceil((COALESCE(CAST(sh AS DOUBLE), 0)/budget) * 100) AS pr -- 收货金额占比
+--FROM (
+--SELECT
+--sum(sh)AS sh
+--, sum (budget) AS budget
+--, name
+--FROM (
+
+
+SELECT
+a.name -- 预算系统的项目名称
+,a.sh -- 预算系统的收货金额
+,b.name  as name2 -- 项目组提供的项目名称
+,b.BUDGET -- 项目组提供的预算金额
+,ceil((COALESCE(CAST(a.sh AS DOUBLE), 0)/b.BUDGET) * 100) AS pr -- 收货金额占比
+FROM (
+SELECT
+name
+,SUM(DISTINCT (sh)) AS sh
+FROM
+(
+SELECT
+c.NOTE1 AS name
+--,b.MBTR
+,sum (b.MBTR_MIGO) AS sh -- 收货金额
+FROM wf.ps_md_wbs  AS a
+LEFT JOIN wf.ps_md_ps AS c  -- 取项目名称
+ON a.ps = c.ps
+LEFT JOIN wf.PS_CO_PR  AS b  -- 取项目金额
+ON a.wbs = b.wbs
+WHERE a.CBZX = '418'
+GROUP BY c.NOTE1
+UNION  ALL
+select
+         main.pr_main_zhuti AS name,
+--         used.Mbtr_A AS PR,
+         used.Mbtr_Migo AS sh
+        from
+            (
+                select
+                    *
+                from
+                    WF.budget_pr_used
+                where
+                    cbzxa = '881101'
+                    and wbs is null
+                    and zyear = '2022'
+                    or zyear = '2023'
+                    and Hkont IN  ('6602150000'
+                       ,'6602160000')
+                    and dtid is null
+                    and Delete_Flag is null
+            ) used
+
+
+
+            left join WF.formtable_main_18 main
+            on used.PR_ID = main.pr_mian_prformalnumber
+            WHERE  main.pr_main_zhuti <> ''
+            )
+           GROUP BY name
+) AS  a  , BPD.PROJECT AS b
+WHERE a.name LIKE '%'||b.name||'%'
+AND b.BUDGET <> '0'

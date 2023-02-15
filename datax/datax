@@ -1,0 +1,11 @@
+Hive表 数据类型	             DataX 内部类型
+TINYINT,SMALLINT,INT,BIGINT	 Long
+FLOAT,DOUBLE	             Double
+String,CHAR,VARCHAR,STRUCT,
+MAP,ARRAY,UNION,BINARY	     String
+BOOLEAN	                     Boolean
+Date,TIMESTAMP	             Date
+
+
+比如开源的 datax 即不支持 hive 的 decimal 数据类型
+Double 数据类型提供了数据的近似表示与近似计算，而 Decimal 数据类型提供了数据的精确表示与精确计算，且支持的数据范围更大：

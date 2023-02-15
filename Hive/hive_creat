@@ -45,7 +45,7 @@ TBLPROPERTIES (
     `veh_num` int)
   COMMENT '新车数据统计'
   PARTITIONED BY (
-    `date_no` string)
+    `date_no` string) -- 创建分区字段 date_no
   ROW FORMAT SERDE
     'org.apache.hadoop.hive.ql.io.orc.OrcSerde'
   STORED AS INPUTFORMAT
@@ -66,3 +66,4 @@ TBLPROPERTIES (
     'sink.semantic'='exactly-once',
     'table.exec.hive.fallback-mapred-writer'='false',
     'transient_lastDdlTime'='1673830601');
+ __ 含分区字段得in

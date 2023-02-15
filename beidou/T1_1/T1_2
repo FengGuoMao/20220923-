@@ -1,0 +1,9 @@
+ SELECT
+ CURRENT_DATE - (DAYOFWEEK(CURRENT_DATE) - 1) DAY - 7 DAY + (ROW_NUMBER() OVER (ORDER BY 1) ) DAY AS result
+ FROM SYSIBM.SYSCOLUMNS fetch first 7 rows only;
+ -- 查询结果： 2013-03-18 2013-03-19 2013-03-20 2013-03-21 2013-03-22 2013-03-23 2013-03-24
+ -- 注： DAYOFWEEK 是查询， 日期是当前周的 第几天。 （周日是第一天） CURRENT_DATE - (DAYOFWEEK(CURRENT_DATE) - 1)
+ -- DAY 是获取本周的第一天 （也就是 星期天 3月24号）
+ -- CURRENT_DATE - (DAYOFWEEK(CURRENT_DATE) - 1) DAY - 7 DAY 是 获取上周的第一天 （也就是 上周的 星期天 3月17号）
+ -- CURRENT_DATE - (DAYOFWEEK(CURRENT_DATE) - 1) DAY - 7 DAY + (ROW_NUMBER() OVER (ORDER BY 1) ) DAY 是从上周星期天开始 ，
+ -- 每行数据 + 1天。 也就是从 3月18号是第1行， 3月19号是第2行 fetch first 7 rows only; 是只检索 7行。
