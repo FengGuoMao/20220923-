@@ -1,0 +1,9 @@
+/*date_format
+*
+*
+--释义：格式化日期
+--用法：date_format(date,格式)
+*/
+--date_add
+--释义：日期加法函数，数字为正，则加多少天，若数字为负数，则为减多少天；
+--用法：date_add(date,number);

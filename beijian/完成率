@@ -1,0 +1,28 @@
+"SELECT
+name
+,warehousename --仓库名称
+,nvl(rate,0) as rate
+,createtime -- 日期
+,`type`
+from
+(
+SELECT
+""24小时条目完成率"" as name --类目
+,warehousename --仓库名称
+,SUM(completeitems)/SUM(standarditem) as rate --24小时条目完成率
+,createtime -- 日期
+,`type`
+from dwd.dwd_spms_completionsummary_dq
+WHERE to_date(createtime) between date_add(CURRENT_DATE(),-7) and CURRENT_DATE()
+group by createtime, warehousename,`type`
+UNION ALL
+SELECT
+""24小时金额完成率"" as name --类目
+,warehousename --仓库名称
+,SUM(completefee)/SUM(standardfee)  as rate --24小时金额完成率
+,createtime -- 日期
+,`type`
+from dwd.dwd_spms_completionsummary_dq
+WHERE to_date(createtime) between date_add(CURRENT_DATE(),-7) and CURRENT_DATE()
+group by createtime, warehousename,`type`
+) as t"

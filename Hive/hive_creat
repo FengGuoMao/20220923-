@@ -67,3 +67,4 @@ TBLPROPERTIES (
     'table.exec.hive.fallback-mapred-writer'='false',
     'transient_lastDdlTime'='1673830601');
  __ 含分区字段得in
+

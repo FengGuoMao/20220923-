@@ -16,3 +16,20 @@ and (1 = (case when :date = '周'then 0 else 1 end ) or WEEK > WEEK(CURRENT TIME
 and (1 = (case when :date = '月'then 0 else 1 end ) or  MONTH > MONTH(CURRENT TIMESTAMP) -7)
 AND (1 = (case when :adcode = '中国' then 1 else 0 end ) or  WARZONE =  :adcode )
 GROUP BY ''
+
+-- 版本迭代 修改跨年问题
+ SELECT
+SUM( CASE WHEN "GROUP"  = '红岩' THEN  NUMBER ELSE 0 END ) as count
+,SUM("NUMBER") AS count2
+,TRUNC(SUM( CASE WHEN "GROUP"  = '红岩' THEN  "NUMBER" ELSE 0 END )*1000/SUM("NUMBER"),1)/10 AS lv
+FROM  UPLOAD.ods_beid_mainOrder_dq
+WHERE    STRAIN  in (:option_car )
+AND EMISSIONSTANDARD in (:option_pf )
+AND   DRIVINGFORM  IN (:option_qd)
+AND FUELTYPE in (:option_rl )
+AND (1 = (case when :date = '周'then 0 else 1 end ) or NETWORKTIME >  TO_CHAR((CURRENT_DATE  - 56 DAY),'YYYY-MM-DD'))
+AND  (1 = (case when :date = '月'then 0 else 1 end ) or NETWORKTIME >  TO_CHAR((CURRENT_DATE  - 180 DAY),'YYYY-MM-DD'))
+AND  (1 = (case when :date = '累计'then 0 else 1 end ) or NETWORKTIME >  TO_CHAR((CURRENT_DATE  - 360 DAY),'YYYY-MM-DD'))
+ and (1 = (case when :date  =  '年'then 0 else 1 end ) or  "YEAR" = YEAR(CURRENT TIMESTAMP))
+AND (1 = (case when :adcode = '中国' then 1 else 0 end ) or  WARZONE =  :adcode )
+GROUP BY ''

@@ -10,7 +10,7 @@
         "reader": {
           "name": "hdfsreader",
           "parameter": {
-            "path": "/user/hive/warehouse/ods.db/ods_zjxl_hy_local_new_car_t",
+            "path": "/user/hive/warehouse/tmp.db/tmp_zjxl_dynamic",
             "defaultFS": "hdfs://10.86.13.142:8020",
             "column": [
               {
@@ -35,38 +35,6 @@
               },
               {
                 "index": 5,
-                "type": "string"
-              },
-              {
-                "index": 6,
-                "type": "string"
-              },
-              {
-                "index": 7,
-                "type": "string"
-              },
-              {
-                "index": 8,
-                "type": "string"
-              },
-              {
-                "index": 9,
-                "type": "string"
-              },
-              {
-                "index": 10,
-                "type": "string"
-              },
-              {
-                "index": 11,
-                "type": "string"
-              },
-              {
-                "index": 12,
-                "type": "string"
-              },
-              {
-                "index": 13,
                 "type": "long"
               }
             ],
@@ -79,26 +47,18 @@
           "name": "mysqlwriter",
           "parameter": {
             "column": [
-              "date",
-              "DistributionCenter",
-              "province",
-              "city",
-              "area",
-              "enterprise",
-              "vehicle_brand",
               "vehicle_type",
               "discharge_standard",
               "fuel_type",
               "drive_type",
-              "horsepower_range",
-              "engine_type",
-              "number"
+              "province",
+              "veh_num"
             ],
             "connection": [
               {
                 "jdbcUrl": "jdbc:mysql://10.86.146.115:3306/easyv?useUnicode=true&characterEncoding=UTF-8",
                 "table": [
-                  "ads_zjxl_hy_local_new_car_dq"
+                  "ads_zjxl_hy_local_dynamic_md"
                 ]
               }
             ],

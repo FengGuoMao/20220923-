@@ -1,7 +1,8 @@
 /*
  * 取软件需求中评审时间节点到当前时间节点的时长大于7天；超期未完成；两种情况作为软件超期标准，不进行历史数据的展示。
  * 审核时间超过七天的
-版本控制v1.3  时间2022/6/17更新  增加reqestid排除项 5059 5060 5061 5062 郑增加logtyp排除项t 增加日期排除项 只取近30天数据
+版本控制v1.3
+ 时间2022/6/17更新  增加reqestid排除项 5059 5060 5061 5062 郑增加logtyp排除项t 增加日期排除项 只取近30天数据
  */
  SELECT COUNT(REQUESTID) AS value
  from(
@@ -33,7 +34,8 @@ DISTINCT demo.csr_bianhao
 , HRMRESOURCE.LASTNAME
 , demo.CSR_TITLE
 FROM
-(SELECT a.REQUESTID
+(SELECT
+a.REQUESTID
 ,a.OPERATEDATE
 ,b.REQUESTID
 ,b.CSR_BIANHAO

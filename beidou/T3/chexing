@@ -1,0 +1,22 @@
+--车型销量
+
+
+SELECT
+"YEAR"
+,(CASE WHEN  :date  = '周' THEN WEEK ELSE "MONTH" END) AS xt5
+,sum( "NUMBER" ) AS NUMBER2
+,"GROUP" AS type
+FROM UPLOAD.ODS_BEID_MAINORDER_DQ
+WHERE   STRAIN  IN(:option_car3 )
+AND EMISSIONSTANDARD IN(:option_pf3 )
+AND DRIVINGFORM  IN(:option_qd3)
+AND FUELTYPE IN(:option_rl3 )
+AND (1 = (case when :date = '周'then 0 else 1 end ) or NETWORKTIME >  TO_CHAR((CURRENT_DATE  - 56 DAY),'YYYY-MM-DD'))
+AND  (1 = (case when :date = '月'then 0 else 1 end ) or NETWORKTIME >  TO_CHAR((CURRENT_DATE  - 180 DAY),'YYYY-MM-DD'))
+AND  (1 = (case when :date = '累计'then 0 else 1 end ) or NETWORKTIME >  TO_CHAR((CURRENT_DATE  - 360 DAY),'YYYY-MM-DD'))
+AND (1 = (case when :date = '年'then 0 else 1 end ) or   "YEAR" = YEAR(CURRENT TIMESTAMP))
+AND (1 = (case when :adcode = '中国' then 1 else 0 end ) or  WARZONE =  :adcode )
+GROUP BY  "YEAR",(CASE WHEN  :date  = '周' THEN WEEK ELSE "MONTH" END),"GROUP"
+ORDER  BY  "YEAR",int((CASE WHEN  :date  = '周' THEN WEEK ELSE "MONTH" END))
+
+

@@ -1,0 +1,20 @@
+/*
+* -- 只展示当前数据
+*/
+
+SELECT
+	GROUP
+    ,SUM("NUMBER") AS NUMBER1 -- 今年销量
+    ,'系列一' AS s
+	FROM UPLOAD.ODS_BEID_MAINORDER_DQ 
+	WHERE    STRAIN  in (:option_car2)
+	AND EMISSIONSTANDARD in (:option_pf2 )
+	AND   DRIVINGFORM  IN (:option_qd2) 
+	AND FUELTYPE in (:option_rl2)
+AND (1 = (case when :date = '周'then 0 else 1 end ) or NETWORKTIME >  TO_CHAR((CURRENT_DATE  - 56 DAY),'YYYY-MM-DD'))
+AND  (1 = (case when :date = '月'then 0 else 1 end ) or NETWORKTIME >  TO_CHAR((CURRENT_DATE  - 180 DAY),'YYYY-MM-DD'))
+AND  (1 = (case when :date = '累计'then 0 else 1 end ) or NETWORKTIME >  TO_CHAR((CURRENT_DATE  - 360 DAY),'YYYY-MM-DD'))
+AND (1 = (case when :adcode = '中国' then 1 else 0 end ) or  WARZONE =  :adcode )
+GROUP BY GROUP
+ORDER  BY NUMBER1 DESC 
+FETCH FIRST 10 ROWS ONLY 

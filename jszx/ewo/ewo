@@ -1,0 +1,253 @@
+-- 主表 WF.formtable_main_44
+-- 匹配表 workflow_nodebase  提供节点名称
+-- 中间表 workflow_requestbase
+WITH tep1
+AS (
+SELECT
+a.id -- 核查3221 存在多个id  id 唯一性
+,a.REQUESTID
+,a.pmn_main_mrnumber -- EWO分类 EWO号前五位 sheet1
+,a.pmn_main_mrnumber -- EWO号    	  sheet2
+,a.pmn_main_preparer -- ewo提出者     sheet3
+,a.pmn_main_DREbm -- 填表人部门    	 sheet4
+,a.suoshuxm -- 项目名称     			 sheet5
+,a.pmn_main_xiuglb -- 修改类别 		 sheet6
+,c.NODENAME -- 当前节点  			sheet7
+,a.pmn_main_writedate -- 填表时间  sheet8
+,base.lastoperatedate  -- 归档日期  sheet9
+FROM WF.formtable_main_44 AS a
+LEFT JOIN (	SELECT
+	DISTINCT REQUESTID
+	,max(nodeid)  over (PARTITION BY REQUESTID) AS nodeid
+	FROM wf.workflow_currentoperator
+	) AS b
+ON a.requestid = b.requestid
+LEFT JOIN wf.workflow_nodebase AS c
+ON b.NODEID = c.id
+LEFT JOIN  wf.workflow_requestbase  base
+ON a.requestid = base.REQUESTID
+WHERE base.currentnodetype = '3'
+--AND a.id IN ('6880','3117')
+AND a.PMN_MAIN_WRITEDATE >'2021-01-01'
+;
+)
+tmp2 AS (
+SELECT
+a.MAINID
+,a.PMN_WLQD_WLTH_PRP -- 物料编码
+,a.PMN_WLQD_TUZHISHENGJ  -- 图纸版本号
+,a.sorfabsj -- SOR释放计划日期   sheet10
+,b.SORReleaseActualTime -- sor释放完成日期  sheet11
+-- SOR状态  		sheet12
+,a.pmn_wlqd_wlth_prp -- 变化物料-PRP号  sheet13
+,a.shangwuddjhwcsj -- 商务定点计划日期   sheet14
+,b.FixedPointActualTime-- 商务定点完成日期 sheet15
+-- 商务定点状态  sheet16
+,a.esopizjhwcsj -- ESO计划完成日期   sheet 17
+,b.OTSApprovalActualTime-- ESO归档完成日期  sheet18
+-- ESO归档状态  sheet19
+,a.ppapjihwcsj -- PPAP认可计划完成日期 sheet 20
+,b.PPAPActualTime-- PPAP认可归档完成日期  sheet21
+--PPAP认可状态 	 	sheet22
+FROM WF.formtable_main_44_dt1 AS a
+LEFT JOIN SRM.p_listofspecialparts  AS b
+ON a.PMN_WLQD_WLTH_PRP = b.MaterialCode
+AND a.PMN_WLQD_TUZHISHENGJ = b.Drawing
+)
+
+
+-- 当前节点 sheet7   取每个requestid 最新的nodeid
+tep3 AS ( SELECT
+a.requestid
+,b.REQUESTID
+,b.NODEID
+,c.nodename
+FROM WF.formtable_main_44 AS a
+LEFT JOIN (
+	SELECT
+	DISTINCT REQUESTID
+	,max(nodeid)  over (PARTITION BY REQUESTID) AS nodeid
+	FROM wf.workflow_currentoperator
+	) AS b
+ON a.requestid = b.requestid
+LEFT JOIN wf.workflow_nodebase AS c
+ON b.NODEID = c.id
+)
+
+SELECT  * FROM wf.workflow_currentoperator
+WHERE REQUESTID  = 50272
+
+-- 归档日期  sheet9
+SELECT * FROM (
+SELECT
+b.lastoperatedate -- 归档日期
+,a.requestid
+, b.currentnodetype
+FROM  wf.formtable_main_44 a
+LEFT JOIN  wf.workflow_requestbase  b
+ON a.requestid = b.REQUESTID
+WHERE b.currentnodetype = '3'
+)
+ORDER BY requestid
+
+-- srm 数据源
+SELECT
+MaterialCode -- 物料编码
+,Drawing -- 图纸版本号
+,CREATORUSERID
+,SORReleaseActualTime -- sor释放完成日期
+,FixedPointActualTime -- 商务定点完成日期
+,PPAPActualTime --PPAP认可归档完成日期
+,OTSApprovalActualTime -- ESO归档完成日期
+FROM SRM.p_listofspecialparts
+WHERE  MaterialCode = '6000018265'
+
+SELECT PMN_WLQD_WLTH_PRP
+,PMN_WLQD_TUZHISHENGJ
+FROM  WF.formtable_main_44_dt1
+WHERE PMN_WLQD_WLTH_PRP =  '6000018265'
+SELECT * FROM  SRM.p_listofspecialparts
+WHERE MaterialCode =  '6000018265'
+
+WHERE FixedPointActualTime <>null
+ORDER BY FixedPointActualTime DESC
+
+
+
+SELECT  * FROM WF.formtable_main_44_dt1 AS a
+WHERE PMN_MAIN_WRITEDATE >'2021-01-01'
+----- 2023/5/26 更新新增字段
+INSERT  into   wf.tmp_ewo_dq
+SELECT
+a.id
+,a.REQUESTID
+,a.ewo-- WO分类 EWO号前五位 sheet1
+,trim(a.pmn_main_mrnumber) AS pmn_main_mrnumber-- EWO号    	  sheet2
+,trim(a.pmn_main_preparer) AS  pmn_main_preparer -- ewo提出者     sheet3
+,trim(a.pmn_main_DREbm) AS pmn_main_DREbm -- 填表人部门    	 sheet4
+,trim(a.center) AS center   -- 填表人中心
+,trim(a.suoshuxm) AS suoshuxm -- 项目名称     			 sheet5
+--,SUBSTR(a.pmn_main_xiuglb,1,1)  AS pmn_main_xiuglb
+,trim(a.pmn_main_xiuglb) AS pmn_main_xiuglb -- 修改类别 		 sheet6
+,a."NODENAME"   -- 当前节点  	sheet7
+pmn_main_writedate
+,trim(a.pmn_main_writedate)AS pmn_main_writedate -- 填表时间  sheet8
+,trim(a.lastoperatedate)AS lastoperatedate -- 归档日期  sheet9
+--
+,a.pmn_main_duandzrr--断点负责人
+,trim(a.pmn_main_guanlian)	-- 关联EWO
+,a.pmn_main_shijiddsj--断点归档完成日期
+-- 新增字段
+,b.PMN_WLQD_NUMBER 	  -- 上级总成号
+,b.PMN_WLQD_WLTH_PRP  --变化物料-PRP号
+,b.PMN_WLQD_POS--变化物料-红岩号
+,b.PMN_WLQD_MIAOSHU--物料描述
+,b.CHENGSHUD	--物料状态
+,b.pmn_wlqd_tuzhishengj	--版本前
+,b.pmn_wlqd_tuyangbbhk	--版本后
+,b.cha1	--变化物料-CHA值
+,b.for1-- 变化物料-FOR值
+,b.pmn_wlqd_zzpclyj -- 在制品处理建议
+,b.pmn_wlqd_huhuanx	--互换性
+,b.etr--ETR情况
+,b.pmn_wlqd_ebomwcqk_new--采购类型
+,b.genggaiqeso--ESO批准情况
+,b.shumofbjh--	图纸数模状态 tuzhifbjh
+,b.pmn_wlqd_ddjhwcrq--断点计划完成日期
+--
+,b.sorfabsj -- SOR释放计划日期   sheet10
+
+,CASE -- SOR释放计划日期
+	WHEN b.SORFABSJ LIKE '%.%.%' THEN REPLACE(b.SORFABSJ,'.','')
+	WHEN b.SORFABSJ LIKE '%/%/%' THEN REPLACE(b.SORFABSJ,'/','')
+	WHEN b.SORFABSJ LIKE '%-%-%' THEN REPLACE(b.SORFABSJ,'-','')
+	ELSE '不涉及' END SORFABSJ2
+,sor.RELEASETIME AS SORReleaseActualTime -- sor释放完成日期  sheet11
+,sor.RELEASETIME AS SORReleaseActualTime2 -- sor释放完成日期  sheet11
+,'' AS SORCONDITION-- SOR状态  		sheet12
+,b.shangwuddjhwcsj  -- 商务定点计划日期   sheet14
+,CASE   -- 商务定点计划日期   sheet14
+	WHEN b.shangwuddjhwcsj LIKE '%.%.%' THEN REPLACE(b.shangwuddjhwcsj,'.','')
+	WHEN b.shangwuddjhwcsj LIKE '%/%/%' THEN REPLACE(b.shangwuddjhwcsj,'/','')
+	WHEN b.shangwuddjhwcsj LIKE '%-%-%' THEN REPLACE(b.shangwuddjhwcsj,'-','')
+	ELSE '不涉及'
+	END shangwuddjhwcsj2
+,d.LastModificationTime AS   FixedPointActualTime   -- 商务定点完成日期 sheet15
+,d.LastModificationTime AS    FixedPointActualTime2  -- 商务定点完成日期 sheet15
+,'' AS FIXECONDITION -- 商务定点状态  sheet16
+,b.esopizjhwcsj -- ESO计划完成日期  sheet 17
+,CASE -- ESO计划完成日期  sheet 17
+	WHEN b.esopizjhwcsj LIKE '%.%.%' THEN REPLACE(b.esopizjhwcsj,'.','')
+	WHEN b.esopizjhwcsj LIKE '%/%/%' THEN REPLACE(b.esopizjhwcsj,'/','')
+	WHEN b.esopizjhwcsj LIKE '%-%-%' THEN REPLACE(b.esopizjhwcsj,'-','')
+	ELSE '不涉及' END esopizjhwcsj2
+,eso.OTSApprovalActualTime-- ESO归档完成日期  sheet18
+,eso.OTSApprovalActualTime AS OTSApprovalActualTime2-- ESO归档完成日期  sheet18
+,'' AS OTSCONDITION  -- ESO归档状态  sheet19
+ ,b.ppapjihwcsj --  PPAP认可计划完成日期 sheet 20
+,CASE --  PPAP认可计划完成日期 sheet 20
+	WHEN b.ppapjihwcsj LIKE '%.%.%' THEN REPLACE( b.ppapjihwcsj,'.','')
+	WHEN b.ppapjihwcsj LIKE '%/%/%' THEN REPLACE( b.ppapjihwcsj,'/','')
+	WHEN b.ppapjihwcsj LIKE '%-%-%' THEN REPLACE( b.ppapjihwcsj,'-','')
+	ELSE '不涉及' END ppapjihwcsj2
+,PPAP.PPAPendtime AS PPAPActualTime-- PPAP认可归档完成日期  sheet21
+,PPAP.PPAPendtime  AS PPAPActualTime2-- PPAP认可归档完成日期  sheet21
+,'' as PPAPCONDITION -- PPAP状态
+FROM wf.EWO_MAIN_Dz AS a
+LEFT JOIN wf.formtable_main_44_dt1   AS b
+ON a.id =b.MAINID  -- 提供 pmn_wlqd_wlth_prp 变化物料号
+--LEFT JOIN  ( ) AS c
+-- ON b.pmn_wlqd_wlth_prp = c.MaterialCode
+ LEFT JOIN (
+--PPAP实际时间  已完成 5/12
+select   ProviderCode,ProviderName, MaterielCode,DrawVersion
+,ROW_NUMBER() OVER (PARTITION BY MaterielCode  ) AS id
+, case  when  LastModificationTime  IS null
+then CreationTime else LastModificationTime end  PPAPendtime
+from  SRM.M_PPAPTaskExecutionSubmitMain where States='60'
+)AS PPAP
+ON  b.pmn_wlqd_wlth_prp = PPAP.MaterielCode
+AND   b.pmn_wlqd_tuyangbbhk = PPAP.DrawVersion
+LEFT JOIN ( --ESO 实际完成时间
+SELECT  MaterialCode ,OTSApprovalActualTime,id
+FROM(
+select   SupplierName, MaterialCode,VersionNumber
+,ROW_NUMBER () OVER (PARTITION BY MaterialCode  )  AS id
+,case  when  LastModificationTime  IS null
+then CreationTime else LastModificationTime end  OTSApprovalActualTime
+from  SRM.O_OTSTaskEstablishment
+where  PlanningStatus=140 and  IsDeleted='0'
+ORDER BY OTSApprovalActualTime DESC
+)
+WHERE id = 1) ESO
+ON b.pmn_wlqd_wlth_prp = eso.MaterialCode
+LEFT JOIN ( -- sor完成时间
+SELECT  -- sor定点完成时间
+A.STATUS  -- 180 已完成
+,A.RELEASETIME --
+,B.MATERIELCODE
+,A.DrawVersion
+ FROM  SRM.S_sorpage A
+ INNER JOIN SRM.S_sorpageinform B ON A.ID = B.SORPAGEID
+ WHERE   B.ISDELETED  = '0' AND A.RELEASETIME  IS NOT NULL
+ ) sor
+ ON  b.pmn_wlqd_wlth_prp = sor.MATERIELCODE
+ AND b.pmn_wlqd_tuyangbbhk = sor.DrawVersion
+LEFT JOIN (
+--SELECT  LastModificationTime,MaterialCode,DrawVersion FROM (
+ select  a.BusinessReportCode
+ ,b.MaterialCode
+ ,b.DrawVersion
+ ,c.ProviderCode
+ ,ProviderName
+ ,a.LastModificationTime AS  LastModificationTime
+-- ,ROW_NUMBER () OVER (PARTITION BY  b.MaterialCode ORDER BY a.LastModificationTime DESC ) id
+ from SRM.T_BusinessReviewReportV2   a
+ inner  join  SRM. T_BusinessReviewReportV2Material b
+ on a.BusinessReportCode=b.BusinessReportCode and  b.IsDeleted=0
+ inner  join  SRM.T_BusinessReviewReportV2Provider c
+ on a.BusinessReportCode=c.BusinessReportCode
+ and b.Id=c.BusinessReviewReportV2Material
+ where a.States=60  and c.SuggestPoint=1  and c.IsDeleted=0 and c.IsDeleted=0 and a.BusinessType=10  ) AS d
+ ON b.pmn_wlqd_wlth_prp = d.MaterialCode
+ AND b.pmn_wlqd_tuyangbbhk = d.DrawVersion

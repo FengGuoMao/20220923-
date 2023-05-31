@@ -9,3 +9,35 @@ AND   DRIVINGFORM  IN (:option_qd4)
 AND FUELTYPE in (:option_rl4 )
 -- AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  PROVINCE =:adcode )
 GROUP BY COTY, CARTYPE
+
+SELECT  SUM( number) as value
+,COTY
+,CARTYPE
+FROM UPLOAD.ODS_BEID_COTY_DQQ  AS a
+LEFT JOIN UPLOAD.ods_beid_area_d AS  b
+ON a.PROVINCE  = b.PROVINCE
+where
+-- CARTYPE  in (:option_car4 )
+ EMISSIONSTANDARD in (:option_pf4 )
+AND   DRIVINGFORM  IN (:option_qd4)
+AND FUELTYPE in (:option_rl4 )
+ AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  b.REGIONALAREA =:adcode )
+GROUP BY COTY, CARTYPE
+ORDER  BY cast(COTY as bigint)
+
+/*
+*  v2.0
+*/
+select
+SUM( remain_num)  as value
+,veh_age as COTY
+,vehicle_type as CARTYPE
+from ads_zjxl_hy_local_veh_age_dist_t as  age
+left join dim_beidou_diqu   as dim_beidou_diqu
+on age.province  = dim_beidou_diqu.province
+where discharge_standard in (:option_pf4 )
+AND   drive_type  IN (:option_qd4)
+AND fuel_type in (:option_rl4 )
+AND (1 = (CASE WHEN  :adcode = '中国'  THEN 1 ELSE 0 END) OR  dim_beidou_diqu.warzone =:adcode )
+GROUP by veh_age,vehicle_type
+

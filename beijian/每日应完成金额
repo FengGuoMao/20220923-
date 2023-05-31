@@ -1,0 +1,28 @@
+select warehousename--仓库名称
+,ROUND(SUM(inboundtaskfee)/10000,0) as dinboundtaskfee--求和每日入库应完成金额
+,ROUND(SUM(inboundfinishfee)/10000,0) as dinboundfinishfee--求和每日入库已完成金额
+,ROUND( DECODE(SUM(inboundtaskfee),0,0,SUM(inboundfinishfee)/SUM(inboundtaskfee))*100,2) as dinboundfinishrate--每日入库金额完成率
+,ROUND(SUM(packtaskfee)/10000,0) as dpacktaskfee--求和每日包装应完成金额
+,ROUND(SUM(packfinishfee)/10000,0) as dpackfinishfee--求和每日包装完成金额
+,ROUND( DECODE(SUM(packtaskfee),0,0,SUM(packfinishfee)/SUM(packtaskfee))*100,2) as dpackfinishrate--每日包装金额完成率
+,ROUND(SUM(shelvestaskfee)/10000,0) as dshelvestaskfee--求和每日上架应完成金额
+,ROUND(SUM(shelvesfinishfee)/10000,0) as dshelvesfinishfee--求和每日上架完成金额
+,ROUND( DECODE(SUM(shelvestaskfee),0,0,SUM(shelvesfinishfee)/SUM(shelvestaskfee))*100,2) as dshelvesfinishrate--每日上架金额完成率
+,ROUND(SUM(picktaskfee)/10000,0) as dpicktaskfee--求和每日拣货应完成金额
+,ROUND(SUM(pickfinishfee)/10000,0) as dpickfinishfee--求和每日拣货完成金额
+,ROUND(DECODE(SUM(picktaskfee),0,0,SUM(pickfinishfee)/SUM(picktaskfee))*100,2) as dpickfinishrate--每日拣货金额完成率
+,ROUND(SUM(boxtaskfee)/10000,0) as dboxtaskfee --求和每日装箱应完成金额数
+,ROUND(SUM(boxfinishfee)/10000,0) as dboxfinishfee --求和每日装箱完成金额
+,ROUND(DECODE(sum(boxtaskfee),0,0,sum(boxfinishfee)/sum(boxtaskfee))*100,2) as dboxfinishrate--每日装箱金额完成率
+,createtime--创建时间
+from --将数据空值设置为0
+(select warehousename
+,nvl(inboundtakfee,0) as inboundtaskfee ,nvl(inboundfinishfee,0) as inboundfinishfee
+,nvl(packtaskfee,0) as packtaskfee ,nvl(packfinishfee,0) as packfinishfee
+,nvl(shelvestaskfee,0) as shelvestaskfee ,nvl(shelvesfinishfee,0) as shelvesfinishfee
+,nvl(picktaskfee,0) as picktaskfee ,nvl(pickfinishfee,0) as pickfinishfee
+,nvl(boxtaskfee,0) as boxtaskfee ,nvl(boxfinishfee,0) as boxfinishfee
+,TO_CHAR(CREATETIME,'yyyymmdd') AS CREATETIME
+from DCS.HOURLYCOMPLETIONTEAM where TO_CHAR(CREATETIME,'yyyymmdd')=TO_CHAR(SYSDATE,'yyyymmdd')) t
+where warehousename is not NULL--去除仓库为空的行
+group by createtime,warehousename

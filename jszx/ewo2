@@ -1,0 +1,56 @@
+
+
+SELECT
+A.STATUS  -- 180 已完成
+,A.RELEASETIME --
+ FROM  SRM.S_sorpage A
+ INNER JOIN SRM.S_sorpageinform B ON A.ID = B.SORPAGEID
+ WHERE B.MATERIELCODE  = '6000148706'
+ AND  B.ISDELETED  = '0'
+
+ --ESO 实际完成时间
+select
+SupplierName
+, MaterialCode
+,VersionNumber
+, case  when  LastModificationTime  IS null
+then CreationTime else LastModificationTime end  ESO实际完成时间
+from  SRM.O_OTSTaskEstablishment
+where  PlanningStatus=140 and  IsDeleted='0'
+AND MaterialCode  = '6000148706'
+--PPAP实际时间
+select
+ProviderCode
+,ProviderName
+,  MaterielCode
+,DrawVersion
+,case  when  LastModificationTime  IS null
+then CreationTime else LastModificationTime end  PPAP实际完成时间
+from  SRM.M_PPAPTaskExecutionSubmitMain where States='60'
+
+ --定点实际时间
+ select  a.BusinessReportCode
+ ,b.MaterialCode
+ ,b.DrawVersion
+ ,c.ProviderCode
+ ,ProviderName ,a.LastModificationTime 实际定点时间
+ from SRM.T_BusinessReviewReportV2   a
+ inner  join  SRM. T_BusinessReviewReportV2Material b
+ on a.BusinessReportCode=b.BusinessReportCode and  b.IsDeleted=0
+ inner  join  SRM.T_BusinessReviewReportV2Provider c
+ on a.BusinessReportCode=c.BusinessReportCode
+ and b.Id=c.BusinessReviewReportV2Material
+ where a.States=60  and c.SuggestPoint=1  and c.IsDeleted=0 and c.IsDeleted=0 and a.BusinessType=10
+
+ ---
+ SELECT
+A.*
+,B.*
+,A.STATUS  -- 180 已完成
+,A.RELEASETIME
+ FROM  SRM.S_sorpage A
+ INNER JOIN SRM.S_sorpageinform B ON A.ID = B.SORPAGEID
+ WHERE B.MATERIELCODE  = '6000148706'
+
+
+ SELECT  BUSINESSREVIEWREPORTV2MATERIAL FROM SRM.T_BusinessReviewReportV2Provider
